@@ -92,6 +92,26 @@
 #pragma Public APIs
 
 
+-(NSNumber*)isTwitterSupported:(id)args {
+    BOOL available = NO;
+    if(NSClassFromString(@"SLComposeViewController")){
+        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+            available=YES;
+        }
+    }
+    return NUMBOOL(available); //This can call this to let them know if this feature is supported
+}
+
+-(NSNumber*)isFacebookSupported:(id)args {
+    BOOL available = NO;
+    if(NSClassFromString(@"SLComposeViewController")){
+        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+            available=YES;
+        }
+    }
+    return NUMBOOL(available); //This can call this to let them know if this feature is supported
+}
+
 /**
  * These are the types available for communicating with the social.framework
  * SLServiceTypeFacebook,

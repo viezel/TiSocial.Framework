@@ -16,31 +16,43 @@ var tweetbtn = Ti.UI.createButton({
 win.add(tweetbtn);
 
 
-var Social = require('dk.napp.social');
-Ti.API.info("module is => " + Social);
-
-fbbtn.addEventListener("click", function(){	
-	Social.facebook({
-		text:"test fb",
-		image:"pin.png",
-		url:"http://www.napp.dk"
+if (Titanium.Platform.name == 'iPhone OS'){
+	//iOS Only
+	
+	var Social = require('dk.napp.social');
+	Ti.API.info("module is => " + Social);
+	
+	fbbtn.addEventListener("click", function(){	
+		if(Social.isFacebookSupported){ //min iOS6 required
+			Social.facebook({
+				text:"initial fb share text",
+				image:"pin.png",
+				url:"http://www.napp.dk"
+			});
+		} else {
+			//implement Ti.Facebook Method
+		}
 	});
-});
-
-tweetbtn.addEventListener("click", function(){	
-	Social.twitter({
-		text:"test tweet",
-		image:"pin.png",
-		url:"http://www.napp.dk"
+	
+	tweetbtn.addEventListener("click", function(){	
+		if(Social.isTwitterSupported){ //min iOS6 required
+			Social.twitter({
+				text:"initial tweet message",
+				image:"pin.png",
+				url:"http://www.napp.dk"
+			});
+		} else {
+			//implement iOS5 Twitter method..
+		}
 	});
-});
-
-Social.addEventListener("complete", function(e){
-	Ti.API.info("complete: "+e.success);	
-});
-
-Social.addEventListener("cancelled", function(e){
-	Ti.API.info("cancelled");	
-});
+	
+	Social.addEventListener("complete", function(e){
+		Ti.API.info("complete: "+e.success);	
+	});
+	
+	Social.addEventListener("cancelled", function(e){
+		Ti.API.info("cancelled");	
+	});
+}
 
 win.open();
