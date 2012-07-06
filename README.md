@@ -37,6 +37,7 @@ Remember to check if the users ios version is iOS6 or above. This below function
 
 
 The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call Social.facebook();
+		
 		if(Ti.Platform.osname == 'iPhone OS'){
 			if(isiOS6Plus()){
 				
