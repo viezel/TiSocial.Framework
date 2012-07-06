@@ -1,4 +1,4 @@
-# SMSDialog Module
+# Social.Framework Module
 
 ## Description
 
