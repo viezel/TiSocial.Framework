@@ -27,32 +27,34 @@ The provided API is simple: None of the `text`, `image` and `url` are required. 
 You can use `Social.isFacebookSupported` and `Social.isTwitterSupported` to ensure that the user has minimum iOS6.
 		
 		if(Ti.Platform.osname == 'iPhone OS'){
-				if(Social.isFacebookSupported){ //min iOS6 required
-				
-			        Social.facebook({
-						text:"initial fb share text",
-						image:"image.png",
-						url:"http://www.napp.dk"
-					});
-				}
-				if(Social.isTwitterSupported){ //min iOS6 required
-					Social.twitter({
-						text:"initial tweet message",
-						image:"image.png",
-						url:"http://www.napp.dk"
-					});
-				}
-				
-				Social.addEventListener("complete", function(e){
-					Ti.API.info("complete: "+e.success);	
-				});
-				
-				Social.addEventListener("cancelled", function(e){
-					Ti.API.info("cancelled");	
+			if(Social.isFacebookSupported){ //min iOS6 required
+		        Social.facebook({
+					text:"initial fb share text",
+					image:"image.png",
+					url:"http://www.napp.dk"
 				});
 			} else {
-				//implement regular Ti.Facebook method
+				//implement Ti.Facebook Method
 			}
+			
+			if(Social.isTwitterSupported){ //min iOS6 required
+				Social.twitter({
+					text:"initial tweet message",
+					image:"image.png",
+					url:"http://www.napp.dk"
+				});
+			} else {
+				//implement iOS5 Twitter method..
+			}
+			
+			Social.addEventListener("complete", function(e){
+				Ti.API.info("complete: "+e.success);	
+			});
+			
+			Social.addEventListener("cancelled", function(e){
+				Ti.API.info("cancelled");	
+			});
+			
 		}
 
 ## Author
