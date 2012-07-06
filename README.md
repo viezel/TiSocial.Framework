@@ -22,7 +22,7 @@ To access this module from JavaScript, you would do the following:
 
 		var Social = require("com.omorandi");
 
-The provided API is extremely simple: once the module is instantiated, you can create an SMSDialog object and use it for opening an SMS dialog window, evenutally pre-populated with recipient numbers and a message body:
+The provided API is extremely simple:
 
         Social.facebook({
 			text:"initial fb share text",
@@ -47,9 +47,12 @@ The provided API is extremely simple: once the module is instantiated, you can c
 ## Author
 
 **Mads Møller**
-    web: http://www.napp.dk
-    email: mm@napp.dk
-    twitter: nappdev
+
+web: http://www.napp.dk
+
+email: mm@napp.dk
+
+twitter: nappdev
 
 ## License
 
