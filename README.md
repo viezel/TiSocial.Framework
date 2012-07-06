@@ -22,27 +22,47 @@ To access this module from JavaScript, you would do the following:
 
 		var Social = require("dk.napp.social");
 
-The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call Social.facebook();
+Remember to check if the users ios version is iOS6 or above. This below function will do:
 
-        Social.facebook({
-			text:"initial fb share text",
-			image:"image.png",
-			url:"http://www.napp.dk"
-		});
-		
-		Social.twitter({
-			text:"initial tweet message",
-			image:"image.png",
-			url:"http://www.napp.dk"
-		});
-		
-		Social.addEventListener("complete", function(e){
-			Ti.API.info("complete: "+e.success);	
-		});
-		
-		Social.addEventListener("cancelled", function(e){
-			Ti.API.info("cancelled");	
-		});
+		function isiOS6Plus(){
+			if (Titanium.Platform.name == 'iPhone OS'){
+				var version = Titanium.Platform.version.split(".");
+				var major = parseInt(version[0],10);
+				if (major >= 6)	{
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call Social.facebook();
+		if(Ti.Platform.osname == 'iPhone OS'){
+			if(isiOS6Plus()){
+				
+		        Social.facebook({
+					text:"initial fb share text",
+					image:"image.png",
+					url:"http://www.napp.dk"
+				});
+				
+				Social.twitter({
+					text:"initial tweet message",
+					image:"image.png",
+					url:"http://www.napp.dk"
+				});
+				
+				Social.addEventListener("complete", function(e){
+					Ti.API.info("complete: "+e.success);	
+				});
+				
+				Social.addEventListener("cancelled", function(e){
+					Ti.API.info("cancelled");	
+				});
+			} else {
+				//implement regular Ti.Facebook method
+			}
+		}
 
 ## Author
 
