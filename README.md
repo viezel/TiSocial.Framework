@@ -1,8 +1,8 @@
-# Social.Framework Module
+# TiSocial.Framework Module
 
 ## Description
 
-The Social module extends the Appcelerator Titanium Mobile framework with the iOS6 social.framework. This enables sharing content to Facebook and Twitter.
+The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework with the iOS6 social.framework. This enables sharing content to Facebook and Twitter.
 
 The module is licensed under the MIT license.
 
@@ -16,11 +16,11 @@ Simply add the following lines to your `tiapp.xml` file:
     </modules>
 
 
-## Accessing the Social Module
+## Accessing the TiSocial.Framework Module
 
 To access this module from JavaScript, you would do the following:
 
-		var Social = require("com.omorandi");
+		var Social = require("dk.napp.social");
 
 The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call Social.facebook();
 
