@@ -22,7 +22,7 @@ To access this module from JavaScript, you would do the following:
 
 		var Social = require("com.omorandi");
 
-The provided API is extremely simple:
+The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call Social.facebook();
 
         Social.facebook({
 			text:"initial fb share text",
