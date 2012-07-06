@@ -30,7 +30,7 @@ The provided API is extremely simple:
 			url:"http://www.napp.dk"
 		});
 		
-		Social.facebook({
+		Social.twitter({
 			text:"initial tweet message",
 			image:"image.png",
 			url:"http://www.napp.dk"
