@@ -26,4 +26,7 @@
 // IMPORTANT NOTE: always use $(inherited) in your overrides
 //
 
-OTHER_LDFLAGS=$(inherited) -framework Social
+// OTHER_LDFLAGS=$(inherited) -framework Social
+
+OTHER_LDFLAGS[sdk=iphoneos6*]=$(inherited) -weak_framework Social
+OTHER_LDFLAGS[sdk=iphonesimulator6*]=$(inherited) -weak_framework Social     
