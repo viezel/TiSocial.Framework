@@ -1,20 +1,42 @@
 var win = Ti.UI.createWindow({backgroundColor:'white'});
+
+var btnContainer = Ti.UI.createView({layout:"vertical"});
+
 var fbbtn = Ti.UI.createButton({
-	width:100,
-	height:30,
-	top:30,
+	width:150,
+	height:35,
+	top:15,
 	title:"Facebook"
 });
-win.add(fbbtn);
+btnContainer.add(fbbtn);
+
+var fbrequestbtn = Ti.UI.createButton({
+	width:150,
+	height:35,
+	top:15,
+	title:"Facebook Request"
+});
+btnContainer.add(fbrequestbtn);
 
 var tweetbtn = Ti.UI.createButton({
-	width:100,
-	height:30,
-	top:90,
+	width:150,
+	height:35,
+	top:15,
 	title:"Twitter"
 });
-win.add(tweetbtn);
+btnContainer.add(tweetbtn);
 
+var tweetrequestbtn = Ti.UI.createButton({
+	width:150,
+	height:35,
+	top:15,
+	title:"Twitter Request"
+});
+btnContainer.add(tweetrequestbtn);
+
+win.add(btnContainer);
+
+Ti.API.error(Ti.App.id);
 
 if (Titanium.Platform.name == 'iPhone OS'){
 	//iOS Only
@@ -34,6 +56,19 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		}
 	});
 	
+	fbrequestbtn.addEventListener("click", function(){	
+		if(Social.isFacebookSupported){ //min iOS6 required
+			Social.requestFacebook({
+				requestType:"GET",
+				url:"https://graph.facebook.com/me/feed",
+				appIdKey:"YOUR_FB_APP_ID",
+				permissionsKey:"publish_stream"
+			});
+		} else {
+			//implement Ti.Facebook Method
+		}
+	});
+	
 	tweetbtn.addEventListener("click", function(){	
 		if(Social.isTwitterSupported){ //min iOS6 required
 			Social.twitter({
@@ -46,8 +81,36 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		}
 	});
 	
+	tweetrequestbtn.addEventListener("click", function(){	
+		if(Social.isTwitterSupported){ //min iOS6 required
+			Social.requestTwitter({
+				requestType:"GET",
+				url:"https://api.twitter.com/1/statuses/user_timeline.json",
+				requestParameterKey:"screen_name",
+				requestParameterVariable:"nappdev"
+			});
+		} else {
+			//implement iOS5 Twitter method..
+		}
+	});
+	
+	Social.addEventListener("twitterRequest", function(e){
+		Ti.API.info("twitterRequest: "+e.success);	
+		Ti.API.info(e.response);
+	});
+	
+	Social.addEventListener("facebookRequest", function(e){
+		Ti.API.info("facebookRequest: "+e.success);	
+		Ti.API.info(e.response);
+	});
+	
 	Social.addEventListener("complete", function(e){
 		Ti.API.info("complete: "+e.success);	
+	});
+	
+	Social.addEventListener("error", function(e){
+		Ti.API.info("error: "+e.success);	
+		Ti.API.info(e.status);	
 	});
 	
 	Social.addEventListener("cancelled", function(e){
