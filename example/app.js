@@ -36,28 +36,26 @@ btnContainer.add(tweetrequestbtn);
 
 win.add(btnContainer);
 
-Ti.API.error(Ti.App.id);
-
 if (Titanium.Platform.name == 'iPhone OS'){
 	//iOS Only
 	
 	var Social = require('dk.napp.social');
 	Ti.API.info("module is => " + Social);
-	
+
 	fbbtn.addEventListener("click", function(){	
-		if(Social.isFacebookSupported){ //min iOS6 required
+		if(Social.isFacebookSupported()){ //min iOS6 required
 			Social.facebook({
 				text:"initial fb share text",
 				image:"pin.png",
 				url:"http://www.napp.dk"
 			});
 		} else {
-			//implement Ti.Facebook Method
+			//implement Ti.Facebook Method - iOS5
 		}
 	});
 	
 	fbrequestbtn.addEventListener("click", function(){	
-		if(Social.isFacebookSupported){ //min iOS6 required
+		if(Social.isFacebookSupported()){ //min iOS6 required
 			Social.requestFacebook({
 				requestType:"GET",
 				url:"https://graph.facebook.com/me/feed",
@@ -65,24 +63,24 @@ if (Titanium.Platform.name == 'iPhone OS'){
 				permissionsKey:"publish_stream"
 			});
 		} else {
-			//implement Ti.Facebook Method
+			//implement Ti.Facebook Method - iOS5
 		}
 	});
 	
 	tweetbtn.addEventListener("click", function(){	
-		if(Social.isTwitterSupported){ //min iOS6 required
+		if(Social.isTwitterSupported()){ //min iOS6 required
 			Social.twitter({
 				text:"initial tweet message",
 				image:"pin.png",
 				url:"http://www.napp.dk"
 			});
 		} else {
-			//implement iOS5 Twitter method..
+			//implement iOS5 Twitter method
 		}
 	});
 	
 	tweetrequestbtn.addEventListener("click", function(){	
-		if(Social.isTwitterSupported){ //min iOS6 required
+		if(Social.isTwitterSupported()){ //min iOS6 required
 			Social.requestTwitter({
 				requestType:"GET",
 				url:"https://api.twitter.com/1/statuses/user_timeline.json",
@@ -90,7 +88,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
 				requestParameterVariable:"nappdev"
 			});
 		} else {
-			//implement iOS5 Twitter method..
+			//implement iOS5 Twitter method
 		}
 	});
 	

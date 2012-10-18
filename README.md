@@ -24,10 +24,10 @@ To access this module from JavaScript, you would do the following:
 
 
 The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call `Social.facebook();`
-You can use `Social.isFacebookSupported` and `Social.isTwitterSupported` to ensure that the user has minimum iOS6.
+You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to ensure that the user has minimum iOS6.
 		
 		if(Ti.Platform.osname == 'iPhone OS'){
-			if(Social.isFacebookSupported){ //min iOS6 required
+			if(Social.isFacebookSupported()){ //min iOS6 required
 		        Social.facebook({
 					text:"initial fb share text",
 					image:"image.png",
@@ -37,7 +37,7 @@ You can use `Social.isFacebookSupported` and `Social.isTwitterSupported` to ensu
 				//implement Ti.Facebook Method
 			}
 			
-			if(Social.isTwitterSupported){ //min iOS6 required
+			if(Social.isTwitterSupported()){ //min iOS6 required
 				Social.twitter({
 					text:"initial tweet message",
 					image:"image.png",
