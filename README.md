@@ -65,7 +65,48 @@ You can use `Social.isFacebookSupported()`, `Social.isTwitterSupported()` and `S
 				Ti.API.info("cancelled");	
 			});
 			
+			///////////////////////////////////////////////
+			// New in v1.1
+			///////////////////////////////////////////////
+			Social.requestFacebook({
+				requestType:"GET",
+				url:"https://graph.facebook.com/me/feed",
+				appIdKey:"YOUR_FB_APP_ID",
+				permissionsKey:"publish_stream"
+			});
+			
+			Social.requestTwitter({
+				requestType:"GET",
+				url:"https://api.twitter.com/1/statuses/user_timeline.json",
+				requestParameterKey:"screen_name",
+				requestParameterVariable:"nappdev"
+			});
+			
+			Social.addEventListener("twitterRequest", function(e){
+				Ti.API.info("twitterRequest: "+e.success);	
+				Ti.API.info(e.response);
+			});
+			
+			Social.addEventListener("facebookRequest", function(e){
+				Ti.API.info("facebookRequest: "+e.success);	
+				Ti.API.info(e.response);
+			});
+			
+			Social.addEventListener("error", function(e){
+				Ti.API.info("error: "+e.success);	
+				Ti.API.info(e.status);	
+			});
+			
 		}
+
+## Changelog
+
+**v1.1**
+SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
+
+**v1.0**
+Initial Implementation of SLComposeViewController. 
+
 
 ## Author
 

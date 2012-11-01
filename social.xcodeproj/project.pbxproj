@@ -29,6 +29,7 @@
 		69B6065A15A4DC5600AB991D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69B6065715A4DC4800AB991D /* Social.framework */; };
 		AA747D9F0F9514B9006C5449 /* DkNappSocial_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		B66EFA9116137E8100A5A9B4 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66EFA9016137E8100A5A9B4 /* Accounts.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		69B6065715A4DC4800AB991D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DkNappSocial_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B66EFA9016137E8100A5A9B4 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libDkNappSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDkNappSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -58,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B66EFA9116137E8100A5A9B4 /* Accounts.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				69B6065A15A4DC5600AB991D /* Social.framework in Frameworks */,
 			);
@@ -77,6 +80,7 @@
 		0867D691FE84028FC02AAC07 /* social */ = {
 			isa = PBXGroup;
 			children = (
+				B66EFA9016137E8100A5A9B4 /* Accounts.framework */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
