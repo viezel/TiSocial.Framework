@@ -116,13 +116,12 @@
  * SLServiceTypeSinaWeibo
  */
 
--(void)facebook:(id)args{
-    
+-(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+    if([SLComposeViewController isAvailableForServiceType:service]) {
         
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
         SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
             if (result == SLComposeViewControllerResultCancelled) {
                 NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
@@ -135,9 +134,6 @@
         };
         controller.completionHandler =myBlock;
         
-        //ensure the UI thread
-        ENSURE_UI_THREAD(facebook,args);
-        
         //get the properties from javascript
         NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
         NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
@@ -155,7 +151,7 @@
         if (shareImage != nil) {
             [controller addImage:[UIImage imageNamed:shareImage]];
         }
-
+        
         [[TiApp app] showModalController:controller animated:animated];
         
     }
@@ -163,56 +159,19 @@
         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
         [self fireEvent:@"error" withObject:event];
     }
-    
+}
+
+-(void)facebook:(id)args{
+    ENSURE_UI_THREAD(facebook, args);
+    [self shareToNetwork:SLServiceTypeFacebook args:args];
 }
 
 
 -(void)twitter:(id)args{
-    
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
-    
-    if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-        
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-        SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result) {
-            if (result == SLComposeViewControllerResultCancelled) {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-                [self fireEvent:@"cancelled" withObject:event];                
-            } else {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
-                [self fireEvent:@"complete" withObject:event];
-            }
-            [controller dismissViewControllerAnimated:YES completion:Nil];
-        };
-        controller.completionHandler =myBlock;
-        
-        //ensure the UI thread
-        ENSURE_UI_THREAD(twitter,args);
-        
-        //get the properties from javascript
-        NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
-        NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
-        NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-        BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
-        
-        if (shareText != nil) {
-            [controller setInitialText:shareText];
-        }
-        
-        if (shareUrl != nil) {
-            [controller addURL:[NSURL URLWithString:shareUrl]];
-        }
-        
-        if (shareImage != nil) {
-            [controller addImage:[UIImage imageNamed:shareImage]];
-        }
+    ENSURE_UI_THREAD(twitter, args);
+    [self shareToNetwork:SLServiceTypeTwitter args:args];
+}
 
-        [[TiApp app] showModalController:controller animated:animated];
-    }
-    else{
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-        [self fireEvent:@"error" withObject:event];
-    }
 }
 
 @end
