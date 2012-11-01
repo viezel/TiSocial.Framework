@@ -107,6 +107,9 @@
 -(NSNumber*)isFacebookSupported:(id)args {
     return [self isNetworkSupported:SLServiceTypeFacebook];
 }
+
+-(NSNumber*)isSinaWeiboSupported:(id)args {
+    return [self isNetworkSupported:SLServiceTypeSinaWeibo];
 }
 
 /**
@@ -172,6 +175,9 @@
     [self shareToNetwork:SLServiceTypeTwitter args:args];
 }
 
+-(void)sinaweibo:(id)args{
+    ENSURE_UI_THREAD(sinaweibo, args);
+    [self shareToNetwork:SLServiceTypeSinaWeibo args:args];
 }
 
 @end
