@@ -90,26 +90,23 @@
 }
 
 #pragma Public APIs
-
-
--(NSNumber*)isTwitterSupported:(id)args {
+-(NSNumber*)isNetworkSupported:(NSString *)service {
     BOOL available = NO;
     if(NSClassFromString(@"SLComposeViewController")){
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+        if([SLComposeViewController isAvailableForServiceType:service]) {
             available=YES;
         }
     }
     return NUMBOOL(available); //This can call this to let them know if this feature is supported
 }
 
+-(NSNumber*)isTwitterSupported:(id)args {
+    return [self isNetworkSupported:SLServiceTypeTwitter];
+}
+
 -(NSNumber*)isFacebookSupported:(id)args {
-    BOOL available = NO;
-    if(NSClassFromString(@"SLComposeViewController")){
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-            available=YES;
-        }
-    }
-    return NUMBOOL(available); //This can call this to let them know if this feature is supported
+    return [self isNetworkSupported:SLServiceTypeFacebook];
+}
 }
 
 /**
