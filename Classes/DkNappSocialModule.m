@@ -169,28 +169,38 @@
 -(void)requestFacebook:(id)args{
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    ACAccountStore *account = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [account accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierFacebook];
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+    
+    NSLog(@"[INFO] Requesting Facebook");
+    
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
     
     NSString *appId = [TiUtils stringValue:@"appIdKey" properties:args def:nil];
     NSString *permissionsKey = [TiUtils stringValue:@"permissionsKey" properties:args def:nil];
     
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-        ACFacebookAppIdKey, appId,
-        ACFacebookAudienceKey, ACFacebookAudienceEveryone,
-        ACFacebookPermissionsKey, @[permissionsKey]
-        , nil
-    ];
+    NSDictionary *options = @{
+        ACFacebookAppIdKey: appId,
+        ACFacebookAudienceKey: ACFacebookAudienceEveryone,
+        ACFacebookPermissionsKey: @[permissionsKey]
+    };
     
-    [account requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
-        if (granted == YES){
-            NSArray *arrayOfAccounts = [account accountsWithAccountType:accountType];
+    [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
+        if (granted){
+            NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+            
+            NSLog(@"[INFO] Number of Facebook Accounts: %@", [arrayOfAccounts count]);
+            
             if ([arrayOfAccounts count] > 0) {
                 ACAccount *fbAccount = [arrayOfAccounts lastObject];
                 
                 //requestType: GET, POST, DELETE
                 NSInteger facebookRequestMethod = SLRequestMethodPOST;
                 NSString *requestType = [[TiUtils stringValue:@"requestType" properties:args def:@"POST"] uppercaseString];
+                
+                NSLog(@"[INFO] Request type: %@", requestType);
+
                 if( [requestType isEqualToString:@"POST"] ){
                     facebookRequestMethod = SLRequestMethodPOST;
                 } else if( [requestType isEqualToString:@"GET"] ){
@@ -201,6 +211,8 @@
                 
                 //args
                 NSString *requestURL = [TiUtils stringValue:@"url" properties:args def:nil];
+                
+                NSLog(@"[INFO] Request URL: %@", requestURL);
                 
                 if(requestURL != nil ){
  
