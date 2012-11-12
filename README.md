@@ -12,7 +12,7 @@ The module is licensed under the MIT license.
 Simply add the following lines to your `tiapp.xml` file:
     
     <modules>
-        <module version="1.0" platform="iphone">dk.napp.social</module> 
+        <module version="1.2" platform="iphone">dk.napp.social</module> 
     </modules>
 
 
@@ -29,8 +29,9 @@ You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to 
 		if(Ti.Platform.osname == 'iPhone OS'){
 			if(Social.isFacebookSupported()){ //min iOS6 required
 		        Social.facebook({
-					text:"initial fb share text",
-					image:"image.png",
+					text:"<3 appcelerator",
+					//image:"pin.png", //local resource folder image
+					image:"http://static.appcelerator.com/images/header/appc_logo200.png", //url image
 					url:"http://www.napp.dk"
 				});
 			} else {
@@ -90,6 +91,10 @@ You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to 
 		}
 
 ## Changelog
+
+**v1.2**
+Added support to share image from downloaded remote images in cache or documents folders.
+Added support to share image from image urls. 
 
 **v1.1**
 SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 

@@ -113,6 +113,12 @@
     return NUMBOOL(available); //This can call this to let them know if this feature is supported
 }
 
+- (BOOL) validateUrl: (NSString *) candidate {
+    NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+    return [urlTest evaluateWithObject:candidate];
+}
+
 
 
 -(void)facebook:(id)args{
@@ -141,6 +147,7 @@
         NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
         NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
         NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+        
         BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
         
         if (shareText != nil) {
@@ -151,8 +158,22 @@
             [controller addURL:[NSURL URLWithString:shareUrl]];
         }
         
-        if (shareImage != nil) {
-            [controller addImage:[UIImage imageNamed:shareImage]];
+        if (shareImage != nil) {   
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
+            if([fileManager fileExistsAtPath:path])
+            {
+                //Load local bundle image
+                [controller addImage:[UIImage imageNamed:shareImage]];
+            } else if( [self validateUrl:shareImage] ){
+                //image from URL
+                [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
+            } else {
+                //load remote image
+                [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
+            }
+            
         }
 
         [[TiApp app] showModalController:controller animated:animated];
@@ -279,7 +300,20 @@
         }
         
         if (shareImage != nil) {
-            [controller addImage:[UIImage imageNamed:shareImage]];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
+            if([fileManager fileExistsAtPath:path])
+            {
+                //Load local bundle image
+                [controller addImage:[UIImage imageNamed:shareImage]];
+            } else if( [self validateUrl:shareImage] ){
+                //image from URL
+                [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
+            } else {
+                //load remote image
+                [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
+            }
         }
 
         [[TiApp app] showModalController:controller animated:animated];
