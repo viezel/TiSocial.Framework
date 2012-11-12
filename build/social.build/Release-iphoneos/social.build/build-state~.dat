@@ -1,129 +1,0 @@
-Tsocial
-v5
-r1
-cCheck dependencies
-cProcessPCH /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth DkNappSocial_Prefix.pch normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o /Titanium/social/Classes/DkNappSocialModule.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o /Titanium/social/Classes/DkNappSocialModuleAssets.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cLibtool /Titanium/social/build/Release-iphoneos/libDkNappSocial.a normal armv7
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk
-c000000004FE2D9130000000000000110
-t1340266771
-s272
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/Accounts.framework/Accounts
-c000000004FE5257100000000000220C0
-t1340417393
-s139456
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-c000000004FE525760000000000311C60
-t1340417398
-s3218528
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
-c000000004FE5257600000000000015F7
-t1340417398
-s5623
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/Social.framework/Social
-c000000004FE5257C00000000000C98F0
-t1340417404
-s825584
-
-N/Titanium/social/Classes/DkNappSocialModule.m
-c000000004FF5EA9100000000000017C8
-t1341516433
-s6088
-
-N/Titanium/social/Classes/DkNappSocialModuleAssets.m
-c000000004FF4A46B0000000000000110
-t1341432939
-s272
-
-N/Titanium/social/DkNappSocial_Prefix.pch
-c000000004FF4A46B000000000000003E
-t1341432939
-s62
-i<Foundation/Foundation.h>
-
-N/Titanium/social/build/Release-iphoneos/libDkNappSocial.a
-t2
-s0
-
-N/Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocial.LinkFileList
-c000000004FF5ED1D00000000000000DE
-t1341517085
-s222
-
-N/Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o
-t2
-s0
-
-N/Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o
-t2
-s0
-
-N/var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth
-t2
-s0
-
-CCheck dependencies
-r0
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies27daf19c24a6b541^7bf5019d24a6b541^---0#1#0#--18"Check dependencies36"5E096F82-C6B4-4BFD-A6D6-E74C5787E811-
-
-CCompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o /Titanium/social/Classes/DkNappSocialModule.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s363209885.222041
-e363209885.418866
-r1
-xCompileC
-xbuild/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o
-x/Titanium/social/Classes/DkNappSocialModule.m
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-o/Titanium/social/Classes/DkNappSocialModule.m:199:9: warning: instance method '-presentViewController:animated:completion:' not found (return type defaults to 'id')
-o        [self presentViewController:controller animated:YES completion:Nil];
-o        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-o1 warning generated.
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection53"Compile /Titanium/social/Classes/DkNappSocialModule.mfc50399d24a6b541^473a6b9d24a6b541^-339"/Titanium/social/Classes/DkNappSocialModule.m:199:9: warning: instance method '-presentViewController:animated:completion:' not found (return type defaults to 'id')        [self presentViewController:controller animated:YES completion:Nil];        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@102"Instance method '-presentViewController:animated:completion:' not found (return type defaults to 'id')-363209885#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@61"file://localhost/Titanium/social/Classes/DkNappSocialModule.m0000000000000000^198#8#198#8#5944#0#14"Semantic Issue1(3@61"file://localhost/Titanium/social/Classes/DkNappSocialModule.m0000000000000000^198#8#198#75#5944#66#-0#0#0#-19%DVTDocumentLocation4@61"file://localhost/Titanium/social/Classes/DkNappSocialModule.m0000000000000000^3789"CompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o Classes/DkNappSocialModule.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Titanium/social    setenv LANG en_US.US-ASCII    setenv PATH "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Tools:/usr/bin:/bin:/usr/sbin:/sbin"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch armv7 -fmessage-length=0 -std=c99 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wformat -Wno-missing-braces -Wno-parentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wno-unused-value -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wno-undeclared-selector -Wno-deprecated-implementations -DTI_VERSION= -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -Wprotocol -Wdeprecated-declarations -g -Wno-sign-conversion -fobjc-abi-version=2 "-DIBOutlet=__attribute__((iboutlet))" "-DIBOutletCollection(ClassName)=__attribute__((iboutletcollection(ClassName)))" "-DIBAction=void)__attribute__((ibaction)" -miphoneos-version-min=4.0 -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-generated-files.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-own-target-headers.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-all-target-headers.hmap -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-project-headers.hmap -I/Titanium/social/build/Release-iphoneos/include "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include" "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include/TiCore" -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources/armv7 -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources -F/Titanium/social/build/Release-iphoneos -DTI_POST_1_2 -include /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch -MMD -MT dependencies -MF /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.d --serialize-diagnostics /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.dia -c /Titanium/social/Classes/DkNappSocialModule.m -o /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModule.o36"7F3EC489-9538-40CF-8B91-E0132DD27DE0-
-
-CCompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o /Titanium/social/Classes/DkNappSocialModuleAssets.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s363209885.222044
-e363209885.299702
-r1
-xCompileC
-xbuild/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o
-x/Titanium/social/Classes/DkNappSocialModuleAssets.m
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection59"Compile /Titanium/social/Classes/DkNappSocialModuleAssets.mca50399d24a6b541^78b94c9d24a6b541^---0#0#0#-19%DVTDocumentLocation2@67"file://localhost/Titanium/social/Classes/DkNappSocialModuleAssets.m0000000000000000^3825"CompileC build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o Classes/DkNappSocialModuleAssets.m normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Titanium/social    setenv LANG en_US.US-ASCII    setenv PATH "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Tools:/usr/bin:/bin:/usr/sbin:/sbin"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -arch armv7 -fmessage-length=0 -std=c99 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wformat -Wno-missing-braces -Wno-parentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wno-unused-value -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wno-undeclared-selector -Wno-deprecated-implementations -DTI_VERSION= -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -Wprotocol -Wdeprecated-declarations -g -Wno-sign-conversion -fobjc-abi-version=2 "-DIBOutlet=__attribute__((iboutlet))" "-DIBOutletCollection(ClassName)=__attribute__((iboutletcollection(ClassName)))" "-DIBAction=void)__attribute__((ibaction)" -miphoneos-version-min=4.0 -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-generated-files.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-own-target-headers.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-all-target-headers.hmap -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-project-headers.hmap -I/Titanium/social/build/Release-iphoneos/include "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include" "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include/TiCore" -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources/armv7 -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources -F/Titanium/social/build/Release-iphoneos -DTI_POST_1_2 -include /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch -MMD -MT dependencies -MF /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.d --serialize-diagnostics /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.dia -c /Titanium/social/Classes/DkNappSocialModuleAssets.m -o /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocialModuleAssets.o36"6727C4D8-0FBD-4DC1-88C7-10E3F02B8B77-
-
-CLibtool /Titanium/social/build/Release-iphoneos/libDkNappSocial.a normal armv7
-s363209885.425546
-e363209885.435075
-r1
-xLibtool
-x/Titanium/social/build/Release-iphoneos/libDkNappSocial.a
-xnormal
-xarmv7
-o/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC 
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection61"Libtool build/Release-iphoneos/libDkNappSocial.a normal armv7e25a6d9d24a6b541^78616f9d24a6b541^-159"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool: -dynamic not specified the following flags are invalid: -ObjC -0#0#0#--1557"Libtool build/Release-iphoneos/libDkNappSocial.a normal armv7    cd /Titanium/social    setenv IPHONEOS_DEPLOYMENT_TARGET 4.0    setenv PATH "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Tools:/usr/bin:/bin:/usr/sbin:/sbin"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only armv7 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -L/Titanium/social/build/Release-iphoneos -filelist /Titanium/social/build/social.build/Release-iphoneos/social.build/Objects-normal/armv7/DkNappSocial.LinkFileList -ObjC -framework Foundation -framework Social -framework Accounts -o /Titanium/social/build/Release-iphoneos/libDkNappSocial.a36"D3D90079-0F9C-4346-8AD5-1158BA94203D-
-
-CProcessPCH /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth DkNappSocial_Prefix.pch normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s363209885.014050
-e363209885.215335
-r1
-xProcessPCH
-x/var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth
-xDkNappSocial_Prefix.pch
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection34"Precompile DkNappSocial_Prefix.pch7024049d24a6b541^1020379d24a6b541^---0#0#0#-19%DVTDocumentLocation2@56"file://localhost/Titanium/social/DkNappSocial_Prefix.pch0000000000000000^3877"ProcessPCH /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth DkNappSocial_Prefix.pch normal armv7 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Titanium/social    setenv LANG en_US.US-ASCII    setenv PATH "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Tools:/usr/bin:/bin:/usr/sbin:/sbin"    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch armv7 -fmessage-length=0 -std=c99 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wformat -Wno-missing-braces -Wno-parentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wno-unused-value -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wno-undeclared-selector -Wno-deprecated-implementations -DTI_VERSION= -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -Wprotocol -Wdeprecated-declarations -g -Wno-sign-conversion -fobjc-abi-version=2 "-DIBOutlet=__attribute__((iboutlet))" "-DIBOutletCollection(ClassName)=__attribute__((iboutletcollection(ClassName)))" "-DIBAction=void)__attribute__((ibaction)" -miphoneos-version-min=4.0 -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-generated-files.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-own-target-headers.hmap -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-all-target-headers.hmap -iquote /Titanium/social/build/social.build/Release-iphoneos/social.build/DkNappSocial-project-headers.hmap -I/Titanium/social/build/Release-iphoneos/include "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include" "-I/Users/madsmoller/Library/Application Support/Titanium/mobilesdk/osx/2.1.0.GA/iphone/include/TiCore" -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources/armv7 -I/Titanium/social/build/social.build/Release-iphoneos/social.build/DerivedSources -F/Titanium/social/build/Release-iphoneos -DTI_POST_1_2 --serialize-diagnostics /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.dia -c /Titanium/social/DkNappSocial_Prefix.pch -o /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.pth -MMD -MT dependencies -MF /var/folders/jf/wyhxtscs403cgf1hqs9tbgyr0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/DkNappSocial_Prefix-hckknhlmjxshnjgjuxdxiuerrwhv/DkNappSocial_Prefix.pch.d36"B9ADD3AE-4801-4358-9BDF-20FEA2595883-
-
