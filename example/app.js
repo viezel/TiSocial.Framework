@@ -68,12 +68,15 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	fbrequestbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
-			Social.requestFacebook({
-				requestType:"GET",
-				url:"https://graph.facebook.com/me/feed",
-				appIdKey:"YOUR_FB_APP_ID",
-				permissionsKey:"publish_stream"
-			});
+              Social.requestFacebook({
+                requestType:"GET",
+                url:"https://graph.facebook.com/me",
+                appIdKey:"YOUR_FB_APP_ID",
+                callbackEvent: "facebookProfile",
+                permissionsKey: "publish_stream"
+             }, {
+                fields: 'id,name,devices'
+             });
 		} else {
 			//implement Ti.Facebook Method - iOS5
 		}
@@ -121,8 +124,8 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		Ti.API.info(e.response);
 	});
 	
-	Social.addEventListener("facebookRequest", function(e){
-		Ti.API.info("facebookRequest: "+e.success);	
+	Social.addEventListener("facebookProfile", function(e){
+		Ti.API.info("facebook profile: "+e.success);	
 		Ti.API.info(e.response);
 	});
 	
