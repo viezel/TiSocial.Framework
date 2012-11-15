@@ -196,6 +196,7 @@
                 //requestType: GET, POST, DELETE
                 NSInteger facebookRequestMethod = SLRequestMethodPOST;
                 NSString *requestType = [[TiUtils stringValue:@"requestType" properties:args def:@"POST"] uppercaseString];
+                NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:args def:@"facebookRequest"];
                 
                 NSLog(@"[INFO] Request type: %@", requestType);
 
@@ -229,7 +230,7 @@
                         //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                         NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
-                        [self fireEvent:@"facebookRequest" withObject:event];
+                        [self fireEvent:callbackEventName withObject:event];
                     }];
                     
                 } else {
