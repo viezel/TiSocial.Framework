@@ -190,8 +190,6 @@
         if (granted){
             NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
             
-            NSLog(@"[INFO] Number of Facebook Accounts: %@", [arrayOfAccounts count]);
-            
             if ([arrayOfAccounts count] > 0) {
                 ACAccount *fbAccount = [arrayOfAccounts lastObject];
                 
