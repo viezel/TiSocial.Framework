@@ -183,7 +183,7 @@
     NSDictionary *options = @{
         ACFacebookAppIdKey: appId,
         ACFacebookAudienceKey: ACFacebookAudienceEveryone,
-        ACFacebookPermissionsKey: @[permissionsKey]
+        ACFacebookPermissionsKey: [permissionsKey componentsSeparatedByString:@","]
     };
     
     [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
