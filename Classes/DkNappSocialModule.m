@@ -191,15 +191,18 @@
     NSString *permissions = [arguments objectForKey:@"permissionsKey"];
     NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"facebookRequest"];
     
-    NSDictionary *options = @{
-        ACFacebookAppIdKey: appId,
-        ACFacebookAudienceKey: ACFacebookAudienceEveryone
-    };
     
     // Append permissions
     if(permissions) {
-        [options setValue:permissionsArray forKey:ACFacebookPermissionsKey];
+       permissionsArray = [permissions componentsSeparatedByString:@","];
     }
+    
+    NSDictionary *options = @{
+        ACFacebookAppIdKey: appId,
+        ACFacebookAudienceKey: ACFacebookAudienceEveryone,
+        ACFacebookPermissionsKey: permissionsArray
+    };
+    
     
     [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
         if (granted){
