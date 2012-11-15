@@ -167,24 +167,39 @@
 
 
 -(void)requestFacebook:(id)args{
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    NSDictionary *arguments = [args objectAtIndex:0];
     
+    // Defaults
+    NSDictionary *requestParameter = nil;
+    NSArray *permissionsArray = nil;
+    
+    if([args count] > 1){
+        requestParameter = [args objectAtIndex:1];
+    }
+
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+
     if(accountStore == nil){
         accountStore =  [[ACAccountStore alloc] init];
     }
-    
+
     NSLog(@"[INFO] Requesting Facebook");
     
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
     
-    NSString *appId = [TiUtils stringValue:@"appIdKey" properties:args def:nil];
-    NSString *permissionsKey = [TiUtils stringValue:@"permissionsKey" properties:args def:nil];
+    NSString *appId = [arguments objectForKey:@"appIdKey"];
+    NSString *permissions = [arguments objectForKey:@"permissionsKey"];
+    NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"facebookRequest"];
     
     NSDictionary *options = @{
         ACFacebookAppIdKey: appId,
-        ACFacebookAudienceKey: ACFacebookAudienceEveryone,
-        ACFacebookPermissionsKey: [permissionsKey componentsSeparatedByString:@","]
+        ACFacebookAudienceKey: ACFacebookAudienceEveryone
     };
+    
+    // Append permissions
+    if(permissions) {
+        [options setValue:permissionsArray forKey:ACFacebookPermissionsKey];
+    }
     
     [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
         if (granted){
@@ -195,33 +210,31 @@
                 
                 //requestType: GET, POST, DELETE
                 NSInteger facebookRequestMethod = SLRequestMethodPOST;
-                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:args def:@"POST"] uppercaseString];
-                NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:args def:@"facebookRequest"];
+                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:arguments def:@"POST"] uppercaseString];
                 
-                NSLog(@"[INFO] Request type: %@", requestType);
-
                 if( [requestType isEqualToString:@"POST"] ){
                     facebookRequestMethod = SLRequestMethodPOST;
                 } else if( [requestType isEqualToString:@"GET"] ){
                     facebookRequestMethod = SLRequestMethodGET;
-                } else {
+                } else if( [requestType isEqualToString:@"DELETE"] ) {
                     facebookRequestMethod = SLRequestMethodDELETE;
+                } else {
+                    NSLog(@"[Social] no valid request method found");
                 }
                 
                 //args
-                NSString *requestURL = [TiUtils stringValue:@"url" properties:args def:nil];
-                
-                NSLog(@"[INFO] Request URL: %@", requestURL);
+                NSString *requestURL = [arguments objectForKey:@"url"];
                 
                 if(requestURL != nil ){
  
                     SLRequest *fbRequest = [SLRequest requestForServiceType:SLServiceTypeFacebook
                                                                    requestMethod:facebookRequestMethod
                                                                              URL:[NSURL URLWithString:requestURL]
-                                                                      parameters:nil];
+                                                                      parameters:requestParameter];
                     [fbRequest setAccount:fbAccount];
                     [fbRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error){
                         NSNumber *isSuccess;
+                                        
                         if ([urlResponse statusCode] == 200) {
                             isSuccess = NUMBOOL(YES);
                         } else {
