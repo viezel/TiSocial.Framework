@@ -12,7 +12,7 @@ The module is licensed under the MIT license.
 Simply add the following lines to your `tiapp.xml` file:
     
     <modules>
-        <module version="1.0" platform="iphone">dk.napp.social</module> 
+        <module version="1.2" platform="iphone">dk.napp.social</module> 
     </modules>
 
 
@@ -100,6 +100,10 @@ You can use `Social.isFacebookSupported()`, `Social.isTwitterSupported()` and `S
 		}
 
 ## Changelog
+
+**v1.2**
+Different parameter setup for `requestFacebook()` and `requestTwitter()`.  
+Now supporting Wall posting and more request parameter.
 
 **v1.1**
 SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
