@@ -95,21 +95,9 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 
 Each of these options is optional
 
-### Social.
-
-TODO: This is an example of a module function.
-
-### ___PROJECTNAMEASIDENTIFIER__.property
-
-TODO: This is an example of a module property.
-
-## Usage
-
-TODO: Enter your usage example here
-
 ## Author
 
-**Mads Møller**  
+**Mads Moller**  
 web: http://www.napp.dk  
 email: mm@napp.dk  
 twitter: nappdev
@@ -121,7 +109,7 @@ twitter: C_BHole
 
 ## License
 
-	Copyright (c) 2010-2011 Mads Møller
+	Copyright (c) 2010-2011 Mads Moller
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
