@@ -98,9 +98,9 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		if(Social.isTwitterSupported()){ //min iOS6 required
 			Social.requestTwitter({
 				requestType:"GET",
-				url:"https://api.twitter.com/1/statuses/user_timeline.json",
-				requestParameterKey:"screen_name",
-				requestParameterVariable:"nappdev"
+				url:"https://api.twitter.com/1/statuses/user_timeline.json"
+			}, {
+				'screen_name': 'nappdev'
 			});
 		} else {
 			//implement iOS5 Twitter method
