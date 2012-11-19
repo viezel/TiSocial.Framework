@@ -118,15 +118,15 @@ Initial Implementation of SLComposeViewController.
 
 ## Author
 
-**Mads Møller**
-web: http://www.napp.dk
-email: mm@napp.dk
-twitter: nappdev
+**Mads Møller**  
+web: http://www.napp.dk  
+email: mm@napp.dk  
+twitter: @nappdev  
 
 ## Contributor
 
 **Christopher Beloch**  
-twitter: C_BHole
+twitter: @C_BHole
 
 ## License
 
