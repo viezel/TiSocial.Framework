@@ -57,8 +57,9 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	fbbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
 			Social.facebook({
-				text:"initial fb share text",
-				image:"pin.png",
+				text:"<3 appcelerator",
+				//image:"pin.png", //local resource folder image
+				image:"http://static.appcelerator.com/images/header/appc_logo200.png", //url image
 				url:"http://www.napp.dk"
 			});
 		} else {

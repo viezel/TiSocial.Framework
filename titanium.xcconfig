@@ -6,11 +6,10 @@
 //
 TITANIUM_SDK_VERSION = 2.1.3.GA
 
-
 // 
 // THESE SHOULD BE OK GENERALLY AS-IS
 //
-TITANIUM_SDK = /Users/cbeloch/Library/Application Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)
+TITANIUM_SDK = /Users/napp/Library/Application Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)
 TITANIUM_BASE_SDK = "$(TITANIUM_SDK)/iphone/include"
 TITANIUM_BASE_SDK2 = "$(TITANIUM_SDK)/iphone/include/TiCore"
 HEADER_SEARCH_PATHS= $(TITANIUM_BASE_SDK) $(TITANIUM_BASE_SDK2)

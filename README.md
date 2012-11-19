@@ -29,8 +29,9 @@ You can use `Social.isFacebookSupported()`, `Social.isTwitterSupported()` and `S
 		if(Ti.Platform.osname == 'iPhone OS'){
 			if(Social.isFacebookSupported()){ //min iOS6 required
 		        Social.facebook({
-					text:"initial fb share text",
-					image:"image.png",
+					text:"<3 appcelerator",
+					//image:"pin.png", //local resource folder image
+					image:"http://static.appcelerator.com/images/header/appc_logo200.png", //url image
 					url:"http://www.napp.dk"
 				});
 			} else {
@@ -101,14 +102,18 @@ You can use `Social.isFacebookSupported()`, `Social.isTwitterSupported()` and `S
 
 ## Changelog
 
-**v1.2**
+**v1.3**  
 Different parameter setup for `requestFacebook()` and `requestTwitter()`.  
 Now supporting Wall posting and more request parameter.
 
-**v1.1**
+**v1.2**  
+Added support to share image from downloaded remote images in cache or documents folders.
+Added support to share image from image urls. 
+
+**v1.1**  
 SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
 
-**v1.0**
+**v1.0**  
 Initial Implementation of SLComposeViewController. 
 
 
