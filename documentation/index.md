@@ -1,4 +1,4 @@
-# social Module
+# TiSocial.Framework Module
 
 ## Description
 
@@ -6,7 +6,7 @@ The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework
 
 The module is licensed under the MIT license.
 
-## Accessing the social Module
+## Accessing the TiSocial.Framework Module
 
 To access this module from JavaScript, you would do the following:
 

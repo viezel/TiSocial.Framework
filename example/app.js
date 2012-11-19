@@ -45,14 +45,14 @@ btnContainer.add(weibobtn);
 win.add(btnContainer);
 
 if (Titanium.Platform.name == 'iPhone OS'){
-	//iOS Only
+	//iOS only module
 	
 	var Social = require('dk.napp.social');
 	Ti.API.info("module is => " + Social);
 	
-    console.log("Facebook available: " + Social.isFacebookSupported());
-    console.log("Twitter available: " + Social.isTwitterSupported());
-    console.log("SinaWeibo available: " + Social.isSinaWeiboSupported());
+    Ti.API.info("Facebook available: " + Social.isFacebookSupported());
+    Ti.API.info("Twitter available: " + Social.isTwitterSupported());
+    Ti.API.info("SinaWeibo available: " + Social.isSinaWeiboSupported());
     
 	fbbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
@@ -69,15 +69,15 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	fbrequestbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
-              Social.requestFacebook({
+			Social.requestFacebook({
                 requestType:"GET",
                 url:"https://graph.facebook.com/me",
                 appIdKey:"YOUR_FB_APP_ID",
                 callbackEvent: "facebookProfile",
                 permissionsKey: "publish_stream"
-             }, {
+			}, {
                 fields: 'id,name,devices'
-             });
+			});
 		} else {
 			//implement Ti.Facebook Method - iOS5
 		}
