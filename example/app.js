@@ -34,6 +34,14 @@ var tweetrequestbtn = Ti.UI.createButton({
 });
 btnContainer.add(tweetrequestbtn);
 
+var weibobtn = Ti.UI.createButton({
+    width:150,
+    height:35,
+    top:15,
+    title:"Sina Weibo"
+});
+btnContainer.add(weibobtn);
+
 win.add(btnContainer);
 
 if (Titanium.Platform.name == 'iPhone OS'){
@@ -41,7 +49,11 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	var Social = require('dk.napp.social');
 	Ti.API.info("module is => " + Social);
-
+	
+    console.log("Facebook available: " + Social.isFacebookSupported());
+    console.log("Twitter available: " + Social.isTwitterSupported());
+    console.log("SinaWeibo available: " + Social.isSinaWeiboSupported());
+    
 	fbbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
 			Social.facebook({
@@ -57,12 +69,15 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	fbrequestbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
-			Social.requestFacebook({
-				requestType:"GET",
-				url:"https://graph.facebook.com/me/feed",
-				appIdKey:"YOUR_FB_APP_ID",
-				permissionsKey:"publish_stream"
-			});
+              Social.requestFacebook({
+                requestType:"GET",
+                url:"https://graph.facebook.com/me",
+                appIdKey:"YOUR_FB_APP_ID",
+                callbackEvent: "facebookProfile",
+                permissionsKey: "publish_stream"
+             }, {
+                fields: 'id,name,devices'
+             });
 		} else {
 			//implement Ti.Facebook Method - iOS5
 		}
@@ -84,22 +99,34 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		if(Social.isTwitterSupported()){ //min iOS6 required
 			Social.requestTwitter({
 				requestType:"GET",
-				url:"https://api.twitter.com/1/statuses/user_timeline.json",
-				requestParameterKey:"screen_name",
-				requestParameterVariable:"nappdev"
+				url:"https://api.twitter.com/1/statuses/user_timeline.json"
+			}, {
+				'screen_name': 'nappdev'
 			});
 		} else {
 			//implement iOS5 Twitter method
 		}
 	});
+    
+    weibobtn.addEventListener("click", function(){
+        if(Social.isSinaWeiboSupported()){ //min iOS6 required
+            Social.sinaweibo({
+                text:"initial sinaweibo message",
+                image:"pin.png",
+                url:"http://www.napp.dk"
+            });
+        } else {
+            //implement fallback..
+        }
+    });
 	
 	Social.addEventListener("twitterRequest", function(e){
 		Ti.API.info("twitterRequest: "+e.success);	
 		Ti.API.info(e.response);
 	});
 	
-	Social.addEventListener("facebookRequest", function(e){
-		Ti.API.info("facebookRequest: "+e.success);	
+	Social.addEventListener("facebookProfile", function(e){
+		Ti.API.info("facebook profile: "+e.success);	
 		Ti.API.info(e.response);
 	});
 	

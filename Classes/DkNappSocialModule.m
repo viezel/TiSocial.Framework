@@ -92,42 +92,40 @@
 
 #pragma Public APIs
 
-
--(NSNumber*)isTwitterSupported:(id)args {
-    BOOL available = NO;
-    if(NSClassFromString(@"SLComposeViewController")){
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-            available=YES;
-        }
-    }
-    return NUMBOOL(available); //This can call this to let them know if this feature is supported
-}
-
--(NSNumber*)isFacebookSupported:(id)args {
-    BOOL available = NO;
-    if(NSClassFromString(@"SLComposeViewController")){
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-            available=YES;
-        }
-    }
-    return NUMBOOL(available); //This can call this to let them know if this feature is supported
-}
-
 - (BOOL) validateUrl: (NSString *) candidate {
     NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
     NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
     return [urlTest evaluateWithObject:candidate];
 }
 
+-(NSNumber*)isNetworkSupported:(NSString *)service {
+    BOOL available = NO;
+    if(NSClassFromString(@"SLComposeViewController")){
+        if([SLComposeViewController isAvailableForServiceType:service]) {
+            available=YES;
+        }
+    }
+    return NUMBOOL(available); //This can call this to let them know if this feature is supported
+}
 
+-(NSNumber*)isTwitterSupported:(id)args {
+    return [self isNetworkSupported:SLServiceTypeTwitter];
+}
 
--(void)facebook:(id)args{
-    
+-(NSNumber*)isFacebookSupported:(id)args {
+    return [self isNetworkSupported:SLServiceTypeFacebook];
+}
+
+-(NSNumber*)isSinaWeiboSupported:(id)args {
+    return [self isNetworkSupported:SLServiceTypeSinaWeibo];
+}
+
+-(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+    if([SLComposeViewController isAvailableForServiceType:service]) {
         
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
         SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
             if (result == SLComposeViewControllerResultCancelled) {
                 NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
@@ -139,9 +137,6 @@
             [controller dismissViewControllerAnimated:YES completion:Nil];
         };
         controller.completionHandler =myBlock;
-        
-        //ensure the UI thread
-        ENSURE_UI_THREAD(facebook,args);
         
         //get the properties from javascript
         NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
@@ -175,7 +170,7 @@
             }
             
         }
-
+        
         [[TiApp app] showModalController:controller animated:animated];
         
     }
@@ -183,55 +178,90 @@
         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
         [self fireEvent:@"error" withObject:event];
     }
-    
+}
+
+/*
+ *  Facebook
+ */
+
+-(void)facebook:(id)args{
+    ENSURE_UI_THREAD(facebook, args);
+    [self shareToNetwork:SLServiceTypeFacebook args:args];
 }
 
 
 -(void)requestFacebook:(id)args{
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    NSDictionary *arguments = [args objectAtIndex:0];
     
-    ACAccountStore *account = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [account accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierFacebook];
+    // Defaults
+    NSDictionary *requestParameter = nil;
+    NSArray *permissionsArray = nil;
     
-    NSString *appId = [TiUtils stringValue:@"appIdKey" properties:args def:nil];
-    NSString *permissionsKey = [TiUtils stringValue:@"permissionsKey" properties:args def:nil];
+    if([args count] > 1){
+        requestParameter = [args objectAtIndex:1];
+    }
+
+    //ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+
+    NSLog(@"[INFO] Requesting Facebook");
     
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-        ACFacebookAppIdKey, appId,
-        ACFacebookAudienceKey, ACFacebookAudienceEveryone,
-        ACFacebookPermissionsKey, @[permissionsKey]
-        , nil
-    ];
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
     
-    [account requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
-        if (granted == YES){
-            NSArray *arrayOfAccounts = [account accountsWithAccountType:accountType];
+    NSString *appId = [arguments objectForKey:@"appIdKey"];
+    NSString *permissions = [arguments objectForKey:@"permissionsKey"];
+    NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"facebookRequest"];
+    
+    
+    // Append permissions
+    if(permissions) {
+       permissionsArray = [permissions componentsSeparatedByString:@","];
+    }
+    
+    NSDictionary *options = @{
+        ACFacebookAppIdKey: appId,
+        ACFacebookAudienceKey: ACFacebookAudienceEveryone,
+        ACFacebookPermissionsKey: permissionsArray
+    };
+    
+    
+    [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
+        if (granted){
+            NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+            
             if ([arrayOfAccounts count] > 0) {
                 ACAccount *fbAccount = [arrayOfAccounts lastObject];
                 
                 //requestType: GET, POST, DELETE
                 NSInteger facebookRequestMethod = SLRequestMethodPOST;
-                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:args def:@"POST"] uppercaseString];
+                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:arguments def:@"POST"] uppercaseString];
+                
                 if( [requestType isEqualToString:@"POST"] ){
                     facebookRequestMethod = SLRequestMethodPOST;
                 } else if( [requestType isEqualToString:@"GET"] ){
                     facebookRequestMethod = SLRequestMethodGET;
-                } else {
+                } else if( [requestType isEqualToString:@"DELETE"] ) {
                     facebookRequestMethod = SLRequestMethodDELETE;
+                } else {
+                    NSLog(@"[Social] no valid request method found");
                 }
                 
                 //args
-                NSString *requestURL = [TiUtils stringValue:@"url" properties:args def:nil];
+                NSString *requestURL = [arguments objectForKey:@"url"];
                 
                 if(requestURL != nil ){
  
                     SLRequest *fbRequest = [SLRequest requestForServiceType:SLServiceTypeFacebook
                                                                    requestMethod:facebookRequestMethod
                                                                              URL:[NSURL URLWithString:requestURL]
-                                                                      parameters:nil];
+                                                                      parameters:requestParameter];
                     [fbRequest setAccount:fbAccount];
                     [fbRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error){
                         NSNumber *isSuccess;
+                                        
                         if ([urlResponse statusCode] == 200) {
                             isSuccess = NUMBOOL(YES);
                         } else {
@@ -240,7 +270,7 @@
                         //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                         NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
-                        [self fireEvent:@"facebookRequest" withObject:event];
+                        [self fireEvent:callbackEventName withObject:event];
                     }];
                     
                 } else {
@@ -264,104 +294,65 @@
 ///////////////////////////////////////////////////////////////////
 
 -(void)twitter:(id)args{
-    
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
-    
-    if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-        
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-        SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result) {
-            if (result == SLComposeViewControllerResultCancelled) {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-                [self fireEvent:@"cancelled" withObject:event];                
-            } else {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
-                [self fireEvent:@"complete" withObject:event];
-            }
-            [controller dismissViewControllerAnimated:YES completion:Nil];
-        };
-        controller.completionHandler =myBlock;
-        
-        //ensure the UI thread
-        ENSURE_UI_THREAD(twitter,args);
-        
-        //get the properties from javascript
-        NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
-        NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
-        NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-        BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
-        
-        if (shareText != nil) {
-            [controller setInitialText:shareText];
-        }
-        
-        if (shareUrl != nil) {
-            [controller addURL:[NSURL URLWithString:shareUrl]];
-        }
-        
-        if (shareImage != nil) {
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
-            if([fileManager fileExistsAtPath:path])
-            {
-                //Load local bundle image
-                [controller addImage:[UIImage imageNamed:shareImage]];
-            } else if( [self validateUrl:shareImage] ){
-                //image from URL
-                [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
-            } else {
-                //load remote image
-                [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
-            }
-        }
-
-        [[TiApp app] showModalController:controller animated:animated];
-    }
-    else{
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-        [self fireEvent:@"error" withObject:event];
-    }
+    ENSURE_UI_THREAD(twitter, args);
+    [self shareToNetwork:SLServiceTypeTwitter args:args];
 }
 
 /**
- * requestType, url, requestParameterKey, requestParameterVariable
+ * args[0] - requestType, url
+ * args[1] - requestParameter
  *
  */
 -(void)requestTwitter:(id)args {
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    NSDictionary *arguments = [args objectAtIndex:0];
     
-    ACAccountStore *account = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [account accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierTwitter];
-    [account requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+    // Defaults
+    NSDictionary *requestParameter = nil;
+    
+    if([args count] > 1){
+        requestParameter = [args objectAtIndex:1];
+    }
+    
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+
+    NSLog(@"[INFO] Requesting Twitter");
+   
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierTwitter];
+    
+    NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"twitterRequest"];
+    
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
         if (granted == YES){
-            NSArray *arrayOfAccounts = [account accountsWithAccountType:accountType];
+            NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+            
             if ([arrayOfAccounts count] > 0) {
                 ACAccount *twitterAccount = [arrayOfAccounts lastObject];
                 
                 //requestType: GET, POST, DELETE
-                NSInteger twRequestMethod = SLRequestMethodPOST;
-                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:args def:@"POST"] uppercaseString];
+                NSInteger requestMethod = SLRequestMethodPOST;
+                NSString *requestType = [[TiUtils stringValue:@"requestType" properties:arguments def:@"POST"] uppercaseString];
+                
                 if( [requestType isEqualToString:@"POST"] ){
-                    twRequestMethod = SLRequestMethodPOST;
+                    requestMethod = SLRequestMethodPOST;
                 } else if( [requestType isEqualToString:@"GET"] ){
-                    twRequestMethod = SLRequestMethodGET;
+                    requestMethod = SLRequestMethodGET;
+                } else if( [requestType isEqualToString:@"DELETE"] ) {
+                    requestMethod = SLRequestMethodDELETE;
                 } else {
-                    twRequestMethod = SLRequestMethodDELETE;
+                    NSLog(@"[Social] no valid request method found");
                 }
                 
                 //args
-                NSString *requestURL = [TiUtils stringValue:@"url" properties:args def:nil];
-                NSString *requestParameterKey = [TiUtils stringValue:@"requestParameterKey" properties:args def:nil];
-                NSString *requestParameterVariable = [TiUtils stringValue:@"requestParameterVariable" properties:args def:nil];
+                NSString *requestURL = [TiUtils stringValue:@"url" properties:arguments def:nil];
                 
-                if(requestURL != nil && requestParameterKey != nil && requestParameterVariable != nil ){
+                if(requestURL != nil){
                     
-                    NSDictionary *param = @{requestParameterKey: requestParameterVariable};
                     SLRequest *twitterRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter
-                                                                            requestMethod:twRequestMethod
+                                                                            requestMethod:requestMethod
                                                                             URL:[NSURL URLWithString:requestURL]
-                                                                            parameters:param];
+                                                                            parameters:requestParameter];
                     [twitterRequest setAccount:twitterAccount];
                     [twitterRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error){
                          NSNumber *isSuccess;
@@ -373,7 +364,7 @@
                          //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                          NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                          NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
-                         [self fireEvent:@"twitterRequest" withObject:event];
+                         [self fireEvent:callbackEventName withObject:event];
                      }];
                     
                 } else {
@@ -386,6 +377,15 @@
             [self fireEvent:@"error" withObject:event];
         }
     }];
+}
+
+/*
+ *  Sina Weibo
+ */
+
+-(void)sinaweibo:(id)args{
+    ENSURE_UI_THREAD(sinaweibo, args);
+    [self shareToNetwork:SLServiceTypeSinaWeibo args:args];
 }
 
 @end
