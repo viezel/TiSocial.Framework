@@ -1,5 +1,2 @@
-social.xcodeproj/xcuserdata/napp.xcuserdatad/xcschemes/Build & Test.xcscheme
-social.xcodeproj/xcuserdata/napp.xcuserdatad/xcschemes/social.xcscheme
-social.xcodeproj/xcuserdata/napp.xcuserdatad/xcschemes/xcschememanagement.plist
 build
-./build
+*.xcuserdatad

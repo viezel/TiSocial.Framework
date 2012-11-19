@@ -2,38 +2,129 @@
 
 ## Description
 
-TODO: Enter your module description here
+The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework with the iOS6 social.framework. This enables sharing content to Facebook and Twitter.
+
+The module is licensed under the MIT license.
 
 ## Accessing the social Module
 
 To access this module from JavaScript, you would do the following:
 
-	var social = require("dk.napp.social");
+	var Social = require("dk.napp.social");
 
 The social variable is a reference to the Module object.	
 
 ## Reference
 
-TODO: If your module has an API, you should document
-the reference here.
+For more detailed code examples take a look into the example app
 
-### ___PROJECTNAMEASIDENTIFIER__.function
+### Twitter
 
-TODO: This is an example of a module function.
+#### Social.isTwitterSupported()
+Returns *true* or *false*.  
+false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
 
-### ___PROJECTNAMEASIDENTIFIER__.property
+#### Social.twitter(*{Object} options*)
+`options` can have the following keys:
 
-TODO: This is an example of a module property.
+* *text* - the status message
+* *image* - a local path to an image you want to share
+* *url* - a url you want to share
 
-## Usage
+Each of these options is optional
 
-TODO: Enter your usage example here
+#### Social.twitterRequest(*{Object} options [, {Object} requestParameter]*)
+`options`has the following keys:
+
+* *requestType* - can be *GET*, *POST* or *DELETE*
+* *url* - the url you want to request
+* *callbackEvent* - optional - default: *facebookRequest* - how is the event called that is fired after request has succeeded?
+
+`requestParameter` is optional, but is build like this:
+
+	{
+		'screen_name': 'C_BHole'
+	}
+
+So *screen_name* is the parameter name / key and *C_BHole* is the value of the parameter
+
+### Facebook
+
+#### Social.isFacebookSupported()
+Returns *true* or *false*.  
+false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
+
+#### Social.facebook(*{Object} options*)
+`options` can have the following keys:
+
+* *text* - the status message
+* *image* - a local path to an image you want to share
+* *url* - a url you want to share
+
+Each of these options is optional
+
+#### Social.facebookRequest(*{Object} options [, {Object} requestParameter]*)
+`options` has the following keys:
+
+* *requestType* - can be *GET*, *POST* or *DELETE*
+* *url* - the url you want to request
+* *appIdKey* - the appid of your facebook app
+* *permissionsKey* - optional - a comma seperated string that contains the required permissions
+* *callbackEvent* - optional - default: *facebookRequest* - how is the event called that is fired after request has succeeded?
+
+`requestParameter` is optional, but is build like this:
+
+	{
+		fields: 'id,name,devices'
+	}
+
+So *fields* is the parameter name / key and *id,name,devices* is the value of the parameter
+
+### Sina Weibo
+
+#### Social.isSinaWeiboSupported()
+Returns *true* or *false*.  
+false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
+
+#### Social.sinaweibo(*{Object} options*)
+`options` can have the following keys:
+
+* *text* - the status message
+* *image* - a local path to an image you want to share
+* *url* - a url you want to share
+
+Each of these options is optional
 
 ## Author
 
-TODO: Enter your author name, email and other contact
-details you want to share here. 
+**Mads Moller**  
+web: http://www.napp.dk  
+email: mm@napp.dk  
+twitter: nappdev
+
+## Contributor
+
+**Christopher Beloch**  
+twitter: C_BHole
 
 ## License
 
-TODO: Enter your license/legal information here.
+	Copyright (c) 2010-2011 Mads Moller
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.

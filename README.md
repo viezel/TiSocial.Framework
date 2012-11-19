@@ -24,7 +24,7 @@ To access this module from JavaScript, you would do the following:
 
 
 The provided API is simple: None of the `text`, `image` and `url` are required. So you could just call `Social.facebook();`
-You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to ensure that the user has minimum iOS6.
+You can use `Social.isFacebookSupported()`, `Social.isTwitterSupported()` and `Social.isSinaWeiboSupported()` to ensure that the user has minimum iOS6.
 		
 		if(Ti.Platform.osname == 'iPhone OS'){
 			if(Social.isFacebookSupported()){ //min iOS6 required
@@ -46,6 +46,16 @@ You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to 
 				});
 			} else {
 				//implement iOS5 Twitter method..
+			}
+			
+			if(Social.isSinaWeiboSupported()){ //min iOS6 required
+				Social.sinaweibo({
+					text:"initial message",
+					image:"image.png",
+					url:"http://www.napp.dk"
+				});
+			} else {
+				//implement Fallback
 			}
 			
 			Social.addEventListener("complete", function(e){
@@ -92,14 +102,18 @@ You can use `Social.isFacebookSupported()` and `Social.isTwitterSupported()` to 
 
 ## Changelog
 
-**v1.2**
+**v1.3**  
+Different parameter setup for `requestFacebook()` and `requestTwitter()`.  
+Now supporting Wall posting and more request parameter.
+
+**v1.2**  
 Added support to share image from downloaded remote images in cache or documents folders.
 Added support to share image from image urls. 
 
-**v1.1**
+**v1.1**  
 SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
 
-**v1.0**
+**v1.0**  
 Initial Implementation of SLComposeViewController. 
 
 

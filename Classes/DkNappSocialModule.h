@@ -6,8 +6,10 @@
  * and licensed under the Apache Public License (version 2)
  */
 #import "TiModule.h"
+#import <Accounts/Accounts.h>
 
-@interface DkNappSocialModule : TiModule 
+@interface DkNappSocialModule : TiModule
 {
+    ACAccountStore* accountStore;
 }
 @end
