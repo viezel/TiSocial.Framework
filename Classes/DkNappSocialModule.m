@@ -132,8 +132,8 @@
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    if([SLComposeViewController isAvailableForServiceType:service]) {
-        
+    //if([SLComposeViewController isAvailableForServiceType:service]) {
+    
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
         SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
             if (result == SLComposeViewControllerResultCancelled) {
@@ -182,11 +182,11 @@
         
         [[TiApp app] showModalController:controller animated:animated];
         
-    }
-    else{
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-        [self fireEvent:@"error" withObject:event];
-    }
+//    }
+//    else{
+//        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+//        [self fireEvent:@"error" withObject:event];
+//    }
 }
 
 /*
@@ -311,7 +311,7 @@
         //ENSURE_UI_THREAD(tweet, args);
         ENSURE_SINGLE_ARG(args, NSDictionary);
         
-        if ([TWTweetComposeViewController canSendTweet])
+        //if ([TWTweetComposeViewController canSendTweet])
         {
             TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
             
