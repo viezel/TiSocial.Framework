@@ -131,7 +131,7 @@ twitter: @nappdev
 **Christopher Beloch**  
 twitter: @C_BHole
 
-**Jongeun Lee**
+**Jongeun Lee**  
 twitter: @yomybaby
 
 ## License

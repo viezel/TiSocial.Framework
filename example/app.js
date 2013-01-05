@@ -84,27 +84,23 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	});
 	
 	tweetbtn.addEventListener("click", function(){	
-		if(Social.isTwitterSupported()){ //min iOS6 required
+		if(Social.isTwitterSupported()){ //min iOS5 required
 			Social.twitter({
 				text:"initial tweet message",
 				image:"pin.png",
 				url:"http://www.napp.dk"
 			});
-		} else {
-			//implement iOS5 Twitter method
-		}
+		} 
 	});
 	
 	tweetrequestbtn.addEventListener("click", function(){	
-		if(Social.isTwitterSupported()){ //min iOS6 required
+		if(Social.isTwitterSupported()){ //min iOS5 required
 			Social.requestTwitter({
 				requestType:"GET",
 				url:"https://api.twitter.com/1/statuses/user_timeline.json"
 			}, {
 				'screen_name': 'nappdev'
 			});
-		} else {
-			//implement iOS5 Twitter method
 		}
 	});
     
