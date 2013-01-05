@@ -30,7 +30,7 @@
 //OTHER_LDFLAGS=$(inherited) -framework Accounts
 
 
-OTHER_LDFLAGS[sdk=iphoneos6*]=$(inherited) -weak_framework Social -weak_framework Accounts
-OTHER_LDFLAGS[sdk=iphonesimulator6*]=$(inherited) -weak_framework Social -weak_framework Accounts
+OTHER_LDFLAGS[sdk=iphoneos6*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
+OTHER_LDFLAGS[sdk=iphonesimulator6*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
 
 

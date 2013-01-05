@@ -15,6 +15,9 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
+//for iOS5 twitter framework
+#import <Twitter/Twitter.h>
+
 @implementation DkNappSocialModule
 
 #pragma mark Internal
@@ -109,22 +112,28 @@
 }
 
 -(NSNumber*)isTwitterSupported:(id)args {
-    return [self isNetworkSupported:SLServiceTypeTwitter];
+    if(NSClassFromString(@"SLComposeViewController") != nil){
+        return [self isNetworkSupported:SLServiceTypeTwitter];
+    }else if(NSClassFromString(@"TWTweetComposeViewController") != nil){
+        return NUMBOOL(YES);
+    }else{
+        return NUMBOOL(NO);
+    }
 }
 
 -(NSNumber*)isFacebookSupported:(id)args {
-    return [self isNetworkSupported:SLServiceTypeFacebook];
+    return [TiUtils isIOS6OrGreater]?[self isNetworkSupported:SLServiceTypeFacebook]:NUMBOOL(NO);
 }
 
 -(NSNumber*)isSinaWeiboSupported:(id)args {
-    return [self isNetworkSupported:SLServiceTypeSinaWeibo];
+    return [TiUtils isIOS6OrGreater]?[self isNetworkSupported:SLServiceTypeSinaWeibo]:NUMBOOL(NO);
 }
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    if([SLComposeViewController isAvailableForServiceType:service]) {
-        
+    //if([SLComposeViewController isAvailableForServiceType:service]) {
+    
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
         SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
             if (result == SLComposeViewControllerResultCancelled) {
@@ -173,11 +182,11 @@
         
         [[TiApp app] showModalController:controller animated:animated];
         
-    }
-    else{
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-        [self fireEvent:@"error" withObject:event];
-    }
+//    }
+//    else{
+//        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+//        [self fireEvent:@"error" withObject:event];
+//    }
 }
 
 /*
@@ -295,7 +304,36 @@
 
 -(void)twitter:(id)args{
     ENSURE_UI_THREAD(twitter, args);
-    [self shareToNetwork:SLServiceTypeTwitter args:args];
+    
+    if(NSClassFromString(@"SLComposeViewController") != nil){
+        [self shareToNetwork:SLServiceTypeTwitter args:args];
+    }else{
+        //ENSURE_UI_THREAD(tweet, args);
+        ENSURE_SINGLE_ARG(args, NSDictionary);
+        
+        //if ([TWTweetComposeViewController canSendTweet])
+        {
+            TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
+            
+            NSString *url = [args objectForKey:@"url"];
+            NSString *message = [args objectForKey:@"text"];
+            
+            if (message != nil) {
+                [tweetSheet setInitialText: message];
+            }
+            
+            if (url != nil) {
+                [tweetSheet addURL:[TiUtils toURL:url proxy:nil]];
+            }
+            
+            tweetSheet.completionHandler = ^(TWTweetComposeViewControllerResult result) {
+                [[TiApp app] hideModalController:tweetSheet animated:YES];
+                [tweetSheet release];
+            };
+            
+            [[TiApp app] showModalController:tweetSheet animated:YES];
+        }
+    }
 }
 
 /**
