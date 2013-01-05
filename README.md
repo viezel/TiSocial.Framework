@@ -101,6 +101,9 @@ Each of these options is optional
 
 ## Changelog
 
+**v1.4**  
+Support for iOS5 Twiiter Framework.
+
 **v1.3**  
 Different parameter setup for `requestFacebook()` and `requestTwitter()`.  
 Now supporting Wall posting and more request parameter.
@@ -123,14 +126,17 @@ web: http://www.napp.dk
 email: mm@napp.dk  
 twitter: @nappdev  
 
-## Contributor
+## Contributors
 
 **Christopher Beloch**  
 twitter: @C_BHole
 
+**Jongeun Lee**
+twitter: @yomybaby
+
 ## License
 
-    Copyright (c) 2010-2011 Mads Møller
+    Copyright (c) 2010-2013 Mads Møller
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

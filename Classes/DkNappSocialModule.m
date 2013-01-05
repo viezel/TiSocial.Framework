@@ -131,62 +131,55 @@
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+ 
+    SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
+    SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
+        if (result == SLComposeViewControllerResultCancelled) {
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+            [self fireEvent:@"cancelled" withObject:event];
+        } else {
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+            [self fireEvent:@"complete" withObject:event];
+        }
+        [controller dismissViewControllerAnimated:YES completion:Nil];
+    };
+    controller.completionHandler =myBlock;
     
-    //if([SLComposeViewController isAvailableForServiceType:service]) {
+    //get the properties from javascript
+    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
+    NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
+    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
     
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
-        SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
-            if (result == SLComposeViewControllerResultCancelled) {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-                [self fireEvent:@"cancelled" withObject:event];
-            } else {
-                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
-                [self fireEvent:@"complete" withObject:event];
-            }
-            [controller dismissViewControllerAnimated:YES completion:Nil];
-        };
-        controller.completionHandler =myBlock;
-        
-        //get the properties from javascript
-        NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
-        NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
-        NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-        
-        BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
-        
-        if (shareText != nil) {
-            [controller setInitialText:shareText];
+    BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
+    
+    if (shareText != nil) {
+        [controller setInitialText:shareText];
+    }
+    
+    if (shareUrl != nil) {
+        [controller addURL:[NSURL URLWithString:shareUrl]];
+    }
+    
+    if (shareImage != nil) {   
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
+        if([fileManager fileExistsAtPath:path])
+        {
+            //Load local bundle image
+            [controller addImage:[UIImage imageNamed:shareImage]];
+        } else if( [self validateUrl:shareImage] ){
+            //image from URL
+            [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
+        } else {
+            //load remote image
+            [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
         }
         
-        if (shareUrl != nil) {
-            [controller addURL:[NSURL URLWithString:shareUrl]];
-        }
-        
-        if (shareImage != nil) {   
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
-            if([fileManager fileExistsAtPath:path])
-            {
-                //Load local bundle image
-                [controller addImage:[UIImage imageNamed:shareImage]];
-            } else if( [self validateUrl:shareImage] ){
-                //image from URL
-                [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
-            } else {
-                //load remote image
-                [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
-            }
-            
-        }
-        
-        [[TiApp app] showModalController:controller animated:animated];
-        
-//    }
-//    else{
-//        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
-//        [self fireEvent:@"error" withObject:event];
-//    }
+    }
+    
+    [[TiApp app] showModalController:controller animated:animated];
+
 }
 
 /*
@@ -308,10 +301,12 @@
     if(NSClassFromString(@"SLComposeViewController") != nil){
         [self shareToNetwork:SLServiceTypeTwitter args:args];
     }else{
+        //iOS5 Support
+        
         //ENSURE_UI_THREAD(tweet, args);
         ENSURE_SINGLE_ARG(args, NSDictionary);
         
-        //if ([TWTweetComposeViewController canSendTweet])
+        if ([TWTweetComposeViewController canSendTweet])
         {
             TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
             
