@@ -2,9 +2,14 @@
 
 ## Description
 
-The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework with the iOS6 social.framework. This enables sharing content to Facebook and Twitter.
+The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework with the iOS6 social.framework. This enables sharing content to Facebook, Twitter and other platforms.
 
 The module is licensed under the MIT license.
+
+
+![SLComposeViewController](http://s9.postimage.org/4h91guusf/SLCompose_View_Controller.png)
+![UIActivityViewController](http://s7.postimage.org/3n4iz7faz/UIActivity_View_Controller.png)
+
 
 
 ## Referencing the module in your Titanium Mobile application ##
@@ -12,7 +17,7 @@ The module is licensed under the MIT license.
 Simply add the following lines to your `tiapp.xml` file:
     
     <modules>
-        <module version="1.3" platform="iphone">dk.napp.social</module> 
+        <module version="1.5" platform="iphone">dk.napp.social</module> 
     </modules>
 
 
@@ -30,7 +35,7 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 `options` can have the following keys:
 
 * *text* - the status message
-* *image* - a local path to an image you want to share
+* *image* - a local/remote path to an image you want to share
 * *url* - a url you want to share
 
 Each of these options is optional
@@ -60,7 +65,7 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 `options` can have the following keys:
 
 * *text* - the status message
-* *image* - a local path to an image you want to share
+* *image* - a local/remote path to an image you want to share
 * *url* - a url you want to share
 
 Each of these options is optional
@@ -92,14 +97,26 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 `options` can have the following keys:
 
 * *text* - the status message
-* *image* - a local path to an image you want to share
+* *image* - a local/remote path to an image you want to share
 * *url* - a url you want to share
 
 Each of these options is optional
 
 
+### UIActivityViewController
+
+#### Social.activityView()
+`options` can have the following keys:
+
+* *text* - the status message
+* *image* - a local/remote path to an image you want to share
+* *removeIcons* - customise the dialog by removing unwanted icons.
 
 ## Changelog
+
+**1.5**
+UIActivityViewController implemented.
+Improved image filepath finder (bundle, data, remote, url)
 
 **v1.4**  
 Support for iOS5 Twiiter Framework.

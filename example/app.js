@@ -42,6 +42,22 @@ var weibobtn = Ti.UI.createButton({
 });
 btnContainer.add(weibobtn);
 
+var activitybtn = Ti.UI.createButton({
+    width:150,
+    height:35,
+    top:15,
+    title:"Activity View"
+});
+btnContainer.add(activitybtn);
+
+var customactivitybtn = Ti.UI.createButton({
+    width:200,
+    height:35,
+    top:15,
+    title:"Custom Activity View"
+});
+btnContainer.add(customactivitybtn);
+
 win.add(btnContainer);
 
 if (Titanium.Platform.name == 'iPhone OS'){
@@ -59,7 +75,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
 			Social.facebook({
 				text:"<3 appcelerator",
 				//image:"pin.png", //local resource folder image
-				image:"http://static.appcelerator.com/images/header/appc_logo200.png", //url image
+				image:"https://secure.gravatar.com/avatar/01d8a2b8546d6479cf4323d72cbed363?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png", //url image
 				url:"http://www.napp.dk"
 			});
 		} else {
@@ -113,6 +129,30 @@ if (Titanium.Platform.name == 'iPhone OS'){
             });
         } else {
             //implement fallback..
+        }
+    });
+    
+    
+    activitybtn.addEventListener("click", function(){
+        if(Social.isActivityViewSupported()){ //min iOS6 required
+            Social.activityView({
+                text:"share like a king!",
+                image:"pin.png"
+            });
+        } else {
+            //implement fallback sharing..
+        }
+    });
+    
+    customactivitybtn.addEventListener("click", function(){
+        if(Social.isActivityViewSupported()){ //min iOS6 required
+            Social.activityView({
+                text:"share like a king!",
+                image:"pin.png",
+                removeIcons:"print,sms,copy,contact,camera,mail"
+            });
+        } else {
+            //implement fallback sharing..
         }
     });
 	

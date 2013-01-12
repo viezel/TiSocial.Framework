@@ -111,6 +111,14 @@
     return NUMBOOL(available); //This can call this to let them know if this feature is supported
 }
 
+-(NSNumber*)isActivitySupported {
+    BOOL available = NO;
+    if(NSClassFromString(@"UIActivityViewController")){
+        available=YES;
+    }
+    return NUMBOOL(available); //This can call this to let them know if this feature is supported
+}
+
 -(NSNumber*)isTwitterSupported:(id)args {
     if(NSClassFromString(@"SLComposeViewController") != nil){
         return [self isNetworkSupported:SLServiceTypeTwitter];
@@ -129,6 +137,51 @@
     return [TiUtils isIOS6OrGreater]?[self isNetworkSupported:SLServiceTypeSinaWeibo]:NUMBOOL(NO);
 }
 
+-(NSNumber*)isActivityViewSupported:(id)args {
+    return [TiUtils isIOS6OrGreater]?[self isActivitySupported]:NUMBOOL(NO);
+}
+
+-(UIImage *)findImage:(NSString *)imagePath
+{
+    if(imagePath != nil){
+        UIImage *image = nil;
+        
+        // Load the image from the application assets
+        NSString *fileNamePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:imagePath];;
+        image = [UIImage imageWithContentsOfFile:fileNamePath];
+        if (image != nil) {
+            //NSLog(@"application asset image found");
+            return image;
+        }
+        
+        //Load local image by extracting the filename without extension
+        NSString* newImagePath = [[imagePath lastPathComponent] stringByDeletingPathExtension];
+        image = [UIImage imageNamed:newImagePath];
+        if(image != nil){
+            //NSLog(@"local filepath extration image found");
+            return image;
+        }
+        
+        //image from URL
+        image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imagePath]]];
+        if(image != nil){
+            //NSLog(@"image from URL found");
+            return image;
+        }
+        
+        //load remote image
+        image = [UIImage imageWithContentsOfFile:imagePath];
+        if(image != nil){
+            //NSLog(@"remote image found");
+            return image;
+        }
+        NSLog(@"image NOT found");
+    }
+    return nil;
+}
+
+
+
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
  
@@ -143,7 +196,7 @@
         }
         [controller dismissViewControllerAnimated:YES completion:Nil];
     };
-    controller.completionHandler =myBlock;
+    controller.completionHandler = myBlock;
     
     //get the properties from javascript
     NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
@@ -160,22 +213,8 @@
         [controller addURL:[NSURL URLWithString:shareUrl]];
     }
     
-    if (shareImage != nil) {   
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *path = [documentsDirectory stringByAppendingPathComponent:shareImage];
-        if([fileManager fileExistsAtPath:path])
-        {
-            //Load local bundle image
-            [controller addImage:[UIImage imageNamed:shareImage]];
-        } else if( [self validateUrl:shareImage] ){
-            //image from URL
-            [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:shareImage]]]];
-        } else {
-            //load remote image
-            [controller addImage:[UIImage imageWithContentsOfFile:shareImage]];
-        }
-        
+    if (shareImage != nil) {
+        [controller addImage: [self findImage:shareImage]];
     }
     
     [[TiApp app] showModalController:controller animated:animated];
@@ -202,8 +241,6 @@
     if([args count] > 1){
         requestParameter = [args objectAtIndex:1];
     }
-
-    //ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
 
     if(accountStore == nil){
         accountStore =  [[ACAccountStore alloc] init];
@@ -248,7 +285,7 @@
                 } else if( [requestType isEqualToString:@"DELETE"] ) {
                     facebookRequestMethod = SLRequestMethodDELETE;
                 } else {
-                    NSLog(@"[Social] no valid request method found");
+                    NSLog(@"[Social] no valid request method found - using POST");
                 }
                 
                 //args
@@ -269,7 +306,7 @@
                         } else {
                             isSuccess = NUMBOOL(NO);
                         }
-                        //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+                        
                         NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
                         [self fireEvent:callbackEventName withObject:event];
@@ -303,7 +340,6 @@
     }else{
         //iOS5 Support
         
-        //ENSURE_UI_THREAD(tweet, args);
         ENSURE_SINGLE_ARG(args, NSDictionary);
         
         if ([TWTweetComposeViewController canSendTweet])
@@ -374,7 +410,7 @@
                 } else if( [requestType isEqualToString:@"DELETE"] ) {
                     requestMethod = SLRequestMethodDELETE;
                 } else {
-                    NSLog(@"[Social] no valid request method found");
+                    NSLog(@"[Social] no valid request method found - using POST");
                 }
                 
                 //args
@@ -419,6 +455,75 @@
 -(void)sinaweibo:(id)args{
     ENSURE_UI_THREAD(sinaweibo, args);
     [self shareToNetwork:SLServiceTypeSinaWeibo args:args];
+}
+
+
+
+
+
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+//                  UIActivityViewController
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+
+
+
+-(void)activityView:(id)args{
+    ENSURE_UI_THREAD(activityView, args);
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    //get the properties from javascript
+    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
+    
+    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
+    
+    UIImage *image = [self findImage:shareImage];
+    
+    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image , nil];
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+    
+    //custom
+    if(removeIcons != nil){
+        
+        NSDictionary *iconMapping = @{
+            @"twitter": UIActivityTypePostToTwitter,
+            @"facebook": UIActivityTypePostToFacebook,
+            @"mail": UIActivityTypeMail,
+            @"sms": UIActivityTypeMessage,
+            @"copy": UIActivityTypeCopyToPasteboard,
+            @"contact": UIActivityTypeAssignToContact,
+            @"weibo": UIActivityTypePostToWeibo,
+            @"print": UIActivityTypePrint,
+            @"camera": UIActivityTypeSaveToCameraRoll
+            
+        };
+        
+        NSArray *icons = [removeIcons componentsSeparatedByString:@","];
+        NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
+        for( int i = 0; i < [icons count]; i++ )
+        {
+            NSString * str = [icons objectAtIndex:i];
+            [excludedIcons addObject:[iconMapping objectForKey:str]];
+        }
+        [avc setExcludedActivityTypes:excludedIcons];
+    }
+    
+    [avc setCompletionHandler:^(NSString *act, BOOL done)
+     {
+         if (!done) {
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+             [self fireEvent:@"cancelled" withObject:event];
+         } else {
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+             [self fireEvent:@"complete" withObject:event];
+         }
+         
+         
+     }];
+    
+    [[TiApp app] showModalController:avc animated:YES];
 }
 
 @end
