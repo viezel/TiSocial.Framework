@@ -7,8 +7,8 @@ The TiSocial.Framework Module extends the Appcelerator Titanium Mobile framework
 The module is licensed under the MIT license.
 
 
-![SLComposeViewController](http://s9.postimage.org/4h91guusf/SLCompose_View_Controller.png)
-![UIActivityViewController](http://s7.postimage.org/3n4iz7faz/UIActivity_View_Controller.png)
+![SLComposeViewController](http://s7.postimage.org/tjrcwqtdn/SLCompose_View_Controller.png)
+![UIActivityViewController](http://s14.postimage.org/y85v7ev1t/UIActivity_View_Controller.png)
 
 
 
