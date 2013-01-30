@@ -358,6 +358,17 @@
             }
             
             tweetSheet.completionHandler = ^(TWTweetComposeViewControllerResult result) {
+	
+			    if (result == TWTweetComposeViewControllerResultCancelled) {
+			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+			        [self fireEvent:@"cancelled" withObject:event];
+			    } else {
+			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+			        [self fireEvent:@"complete" withObject:event];
+			    }
+	
+	
+	
                 [[TiApp app] hideModalController:tweetSheet animated:YES];
                 [tweetSheet release];
             };
