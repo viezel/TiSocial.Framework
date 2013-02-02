@@ -129,6 +129,10 @@
     }
 }
 
+-(NSNumber*)isRequestTwitterSupported:(id)args { //for iOS6 twitter
+    return [TiUtils isIOS6OrGreater]?[self isNetworkSupported:SLServiceTypeTwitter]:NUMBOOL(NO);
+}
+
 -(NSNumber*)isFacebookSupported:(id)args {
     return [TiUtils isIOS6OrGreater]?[self isNetworkSupported:SLServiceTypeFacebook]:NUMBOOL(NO);
 }
@@ -150,7 +154,6 @@
         NSString *fileNamePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:imagePath];;
         image = [UIImage imageWithContentsOfFile:fileNamePath];
         if (image != nil) {
-            //NSLog(@"application asset image found");
             return image;
         }
         
@@ -158,21 +161,18 @@
         NSString* newImagePath = [[imagePath lastPathComponent] stringByDeletingPathExtension];
         image = [UIImage imageNamed:newImagePath];
         if(image != nil){
-            //NSLog(@"local filepath extration image found");
             return image;
         }
         
         //image from URL
         image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imagePath]]];
         if(image != nil){
-            //NSLog(@"image from URL found");
             return image;
         }
         
         //load remote image
         image = [UIImage imageWithContentsOfFile:imagePath];
         if(image != nil){
-            //NSLog(@"remote image found");
             return image;
         }
         NSLog(@"image NOT found");
@@ -245,8 +245,6 @@
     if(accountStore == nil){
         accountStore =  [[ACAccountStore alloc] init];
     }
-
-    NSLog(@"[INFO] Requesting Facebook");
     
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
     
@@ -367,8 +365,6 @@
 			        [self fireEvent:@"complete" withObject:event];
 			    }
 	
-	
-	
                 [[TiApp app] hideModalController:tweetSheet animated:YES];
                 [tweetSheet release];
             };
@@ -397,8 +393,6 @@
         accountStore =  [[ACAccountStore alloc] init];
     }
 
-    NSLog(@"[INFO] Requesting Twitter");
-   
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierTwitter];
     
     NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"twitterRequest"];
@@ -467,8 +461,6 @@
     ENSURE_UI_THREAD(sinaweibo, args);
     [self shareToNetwork:SLServiceTypeSinaWeibo args:args];
 }
-
-
 
 
 

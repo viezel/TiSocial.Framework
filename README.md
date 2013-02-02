@@ -114,7 +114,11 @@ Each of these options is optional
 
 ## Changelog
 
-**1.5**
+**v1.5.1**
+Bugfixes.
+Added `isRequestTwitterSupported()` for iOS6 check
+
+**v1.5**
 UIActivityViewController implemented.
 Improved image filepath finder (bundle, data, remote, url)
 
