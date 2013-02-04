@@ -110,7 +110,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	});
 	
 	tweetrequestbtn.addEventListener("click", function(){	
-		if(Social.isTwitterSupported()){ //min iOS5 required
+		if(Social.isRequestTwitterSupported()){ //min iOS6 required
 			Social.requestTwitter({
 				requestType:"GET",
 				url:"https://api.twitter.com/1/statuses/user_timeline.json"
