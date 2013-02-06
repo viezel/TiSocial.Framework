@@ -1,4 +1,7 @@
-/* You will need the TiSocial.Framework module found here: https://github.com/viezel/TiSocial.Framework
+/* 
+By @dan_tamas. 
+
+You will need the TiSocial.Framework module found here: https://github.com/viezel/TiSocial.Framework
 
 tw_apps taken from here: https://github.com/chrismaddern/Follow-Me-On-Twitter-iOS-Button/blob/master/FollowMeButton.m by Chris Maddern.
 
@@ -16,7 +19,7 @@ var follow_tw = Titanium.UI.createButton({
 
 require('/backend/follow_on_twitter')({
 	button:follow_tw,
-	twitter_account:app_conf.twitter_account,
+	twitter_account:'dan_tamas',
 	onFollow:function() {
 		follow_tw.title = "Thnx for Following!";
 		follow_tw.enabled = false;
@@ -28,7 +31,7 @@ require('/backend/follow_on_twitter')({
 	onError: function(err) {
 		if (err == 'No account') {
 			follow_tw.enabled =  false;
-			follow_tw.title = 'No Twitter account'
+			follow_tw.title = 'No Account Set'
 		}
 		else {
 			alert(err);

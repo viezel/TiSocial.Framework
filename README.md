@@ -112,6 +112,17 @@ Each of these options is optional
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 
+
+## Example of usage
+
+#### FollowMe Button
+`example/follow_on_twitter.js` contains an example on how to implement a "Follow Me" button.
+It takes an account the os version and for iOS 5 will try to open the profile page in another application that exits on the device.
+
+Please check the *Example* section in the file.
+
+
+
 ## Changelog
 
 **v1.5.2**
