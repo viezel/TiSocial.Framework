@@ -74,14 +74,16 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		if(Social.isFacebookSupported()){ //min iOS6 required
 			Social.facebook({
 				text:"<3 appcelerator",
-				//image:"pin.png", //local resource folder image
-				image:"https://secure.gravatar.com/avatar/01d8a2b8546d6479cf4323d72cbed363?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png", //url image
+				image:"pin.png", //local resource folder image
+				//image:"https://secure.gravatar.com/avatar/01d8a2b8546d6479cf4323d72cbed363?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png", //url image
 				url:"http://www.napp.dk"
 			});
 		} else {
 			//implement Ti.Facebook Method - iOS5
 		}
 	});
+	
+	//use the Graph API Explorer for much more info: https://developers.facebook.com/tools/explorer
 	
 	fbrequestbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required
@@ -90,9 +92,9 @@ if (Titanium.Platform.name == 'iPhone OS'){
                 url:"https://graph.facebook.com/me",
                 appIdKey:"YOUR_FB_APP_ID",
                 callbackEvent: "facebookProfile",
-                permissionsKey: "publish_stream"
+                permissionsKey: "publish_stream, email, read_stream, publish_checkins" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
 			}, {
-                fields: 'id,name,devices'
+                fields: 'id,name,location'
 			});
 		} else {
 			//implement Ti.Facebook Method - iOS5
@@ -156,14 +158,20 @@ if (Titanium.Platform.name == 'iPhone OS'){
         }
     });
 	
-	Social.addEventListener("twitterRequest", function(e){
+	Social.addEventListener("twitterRequest", function(e){ //default callback
 		Ti.API.info("twitterRequest: "+e.success);	
-		Ti.API.info(e.response);
+		Ti.API.info(e.response); //json
+		Ti.API.info(e.rawResponse); //raw data - this is a string
+	});
+	
+	Social.addEventListener("facebookRequest", function(e){ //default callback
+		Ti.API.info("facebookRequest: "+e.success);	
+		Ti.API.info(e.response); //json
 	});
 	
 	Social.addEventListener("facebookProfile", function(e){
 		Ti.API.info("facebook profile: "+e.success);	
-		Ti.API.info(e.response);
+		Ti.API.info(e.response); //json
 	});
 	
 	Social.addEventListener("complete", function(e){

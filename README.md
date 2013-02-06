@@ -114,6 +114,9 @@ Each of these options is optional
 
 ## Changelog
 
+**v1.5.2**
+Added raw data callback response for `requestTwitter()`.  
+
 **v1.5.1**
 Bugfixes.
 Added `isRequestTwitterSupported()` for iOS6 check
