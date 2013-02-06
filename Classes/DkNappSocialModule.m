@@ -254,7 +254,7 @@
     
     
     // Append permissions
-    if(permissions) {
+    if(permissions != nil) {
        permissionsArray = [permissions componentsSeparatedByString:@","];
     }
     
@@ -437,7 +437,8 @@
                          }
                          //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                          NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
-                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
+                         NSString *rawData = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", rawData,@"rawResponse", nil];
                          [self fireEvent:callbackEventName withObject:event];
                      }];
                     
