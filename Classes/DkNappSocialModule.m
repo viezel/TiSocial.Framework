@@ -11,6 +11,7 @@
 #import "TiUtils.h"
 #import "TiApp.h"
 
+
 //include Social and Accounts Frameworks
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
@@ -60,6 +61,7 @@
 -(void)dealloc
 {
 	// release any resources that have been retained by the module
+    RELEASE_TO_NIL(popoverController);
 	[super dealloc];
 }
 
@@ -479,38 +481,68 @@
     
     //get the properties from javascript
     NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    
     NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
     NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
-    
     UIImage *image = [self findImage:shareImage];
-    
     NSArray *activityItems = [NSArray arrayWithObjects:shareText,image , nil];
+    
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
-    //custom
+    //custom icons
     if(removeIcons != nil){
-        
-        NSDictionary *iconMapping = @{
-            @"twitter": UIActivityTypePostToTwitter,
-            @"facebook": UIActivityTypePostToFacebook,
-            @"mail": UIActivityTypeMail,
-            @"sms": UIActivityTypeMessage,
-            @"copy": UIActivityTypeCopyToPasteboard,
-            @"contact": UIActivityTypeAssignToContact,
-            @"weibo": UIActivityTypePostToWeibo,
-            @"print": UIActivityTypePrint,
-            @"camera": UIActivityTypeSaveToCameraRoll
-            
-        };
-        
-        NSArray *icons = [removeIcons componentsSeparatedByString:@","];
-        NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
-        for( int i = 0; i < [icons count]; i++ )
-        {
-            NSString * str = [icons objectAtIndex:i];
-            [excludedIcons addObject:[iconMapping objectForKey:str]];
-        }
+        NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
+        [avc setExcludedActivityTypes:excludedIcons];
+    }
+    
+    [avc setCompletionHandler:^(NSString *act, BOOL done)
+     {
+         if (!done) {
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+             [self fireEvent:@"cancelled" withObject:event];
+         } else {
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+             [self fireEvent:@"complete" withObject:event];
+         }   
+     }];
+    
+    [[TiApp app] showModalController:avc animated:YES];
+}
+
+
+-(void)activityPopover:(id)args
+{
+    if(![TiUtils isIPad]){
+        NSLog(@"[ERROR] activityPopover is iPad Only feature");
+        return;
+    }
+    
+    ENSURE_UI_THREAD(activityPopover, args);
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if(popoverController.popoverVisible){
+        [popoverController dismissPopoverAnimated:YES];
+        return;
+    }
+    
+    //get the properties from javascript
+    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
+    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
+    NSArray * passthroughViews = [args objectForKey:@"passthroughViews"];
+    UIBarButtonItem * senderButton = [args objectForKey:@"view"];
+    
+    if(senderButton == nil){
+        NSLog(@"[ERROR] You must specify a source button - property: view");
+        return;
+    }
+    UIImage *image = [self findImage:shareImage];
+    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image , nil];
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+    
+    //custom icons
+    if(removeIcons != nil){
+        NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
@@ -523,11 +555,51 @@
              NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
              [self fireEvent:@"complete" withObject:event];
          }
-         
-         
      }];
     
-    [[TiApp app] showModalController:avc animated:YES];
+    //popOver
+    popoverController = [[UIPopoverController alloc] initWithContentViewController:avc];
+    if(passthroughViews != nil){
+        [self setPassthroughViews:passthroughViews];
+    }
+    [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
+-(void)setPassthroughViews:(id)args
+{
+    NSMutableArray* views = [NSMutableArray arrayWithCapacity:[args count]];
+    for (TiViewProxy* proxy in args) {
+        if (![proxy isKindOfClass:[TiViewProxy class]]) {
+            [self throwException:[NSString stringWithFormat:@"Passed non-view object %@ as passthrough view",proxy] subreason:nil location:CODELOCATION];
+        }
+        [views addObject:[proxy view]];
+    }
+    [popoverController setPassthroughViews:views];
+}
+
+-(NSMutableArray *)activityIcons:(NSString *)removeIcons
+{
+    NSDictionary *iconMapping = @{
+                                  @"twitter": UIActivityTypePostToTwitter,
+                                  @"facebook": UIActivityTypePostToFacebook,
+                                  @"mail": UIActivityTypeMail,
+                                  @"sms": UIActivityTypeMessage,
+                                  @"copy": UIActivityTypeCopyToPasteboard,
+                                  @"contact": UIActivityTypeAssignToContact,
+                                  @"weibo": UIActivityTypePostToWeibo,
+                                  @"print": UIActivityTypePrint,
+                                  @"camera": UIActivityTypeSaveToCameraRoll
+                                  
+                                  };
+    
+    NSArray *icons = [removeIcons componentsSeparatedByString:@","];
+    NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
+    for( int i = 0; i < [icons count]; i++ )
+    {
+        NSString * str = [icons objectAtIndex:i];
+        [excludedIcons addObject:[iconMapping objectForKey:str]];
+    }
+    return excludedIcons;
+    
+}
 @end

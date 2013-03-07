@@ -166,13 +166,13 @@ if (Titanium.Platform.name == 'iPhone OS'){
         }
     });
     
-    activityPopoverBtn.addEventListener("click", function(e){
+    activityPopoverBtn.addEventListener("click", function(){
         if(Social.isActivityViewSupported()){ //min iOS6 required
             Social.activityPopover({
                 text:"share like a king!",
                 image:"pin.png",
                 removeIcons:"print,sms,copy,contact,camera,mail",
-                view: activityPopoverBtn //source button
+                view:activityPopoverBtn
             });
         } else {
             //implement fallback sharing..

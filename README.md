@@ -17,7 +17,7 @@ The module is licensed under the MIT license.
 Simply add the following lines to your `tiapp.xml` file:
     
     <modules>
-        <module version="1.5" platform="iphone">dk.napp.social</module> 
+        <module platform="iphone">dk.napp.social</module> 
     </modules>
 
 
@@ -112,6 +112,14 @@ Each of these options is optional
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 
+#### Social.activityPopover() (iPad only)
+`options` can have the following keys:
+
+* *text* - the status message
+* *image* - a local/remote path to an image you want to share
+* *removeIcons* - customise the dialog by removing unwanted icons.
+* *view* - the source button
+
 
 ## Example of usage
 
@@ -124,6 +132,9 @@ Please check the *Example* section in the file.
 
 
 ## Changelog
+
+**v1.5.3**
+Added UIActivityViewController popOver for iPad use: `activityPopover()`.  
 
 **v1.5.2**
 Added raw data callback response for `requestTwitter()`.  
@@ -168,6 +179,9 @@ twitter: @C_BHole
 
 **Jongeun Lee**  
 twitter: @yomybaby
+
+**Daniel Tamas**  
+twitter: @dan_tamas
 
 ## License
 

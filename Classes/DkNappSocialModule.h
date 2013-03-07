@@ -11,5 +11,7 @@
 @interface DkNappSocialModule : TiModule
 {
     ACAccountStore* accountStore;
+	UIPopoverController *popoverController;
+    
 }
 @end
