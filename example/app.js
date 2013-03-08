@@ -3,7 +3,7 @@ var win = Ti.UI.createWindow({backgroundColor:'white'});
 var btnContainer = Ti.UI.createView({layout:"vertical"});
 
 var fbbtn = Ti.UI.createButton({
-	width:150,
+	width:200,
 	height:35,
 	top:15,
 	title:"Facebook"
@@ -11,7 +11,7 @@ var fbbtn = Ti.UI.createButton({
 btnContainer.add(fbbtn);
 
 var fbrequestbtn = Ti.UI.createButton({
-	width:150,
+	width:200,
 	height:35,
 	top:15,
 	title:"Facebook Request"
@@ -19,7 +19,7 @@ var fbrequestbtn = Ti.UI.createButton({
 btnContainer.add(fbrequestbtn);
 
 var tweetbtn = Ti.UI.createButton({
-	width:150,
+	width:200,
 	height:35,
 	top:15,
 	title:"Twitter"
@@ -27,15 +27,23 @@ var tweetbtn = Ti.UI.createButton({
 btnContainer.add(tweetbtn);
 
 var tweetrequestbtn = Ti.UI.createButton({
-	width:150,
+	width:200,
 	height:35,
 	top:15,
 	title:"Twitter Request"
 });
 btnContainer.add(tweetrequestbtn);
 
+var tweetRequestSelectedBtn = Ti.UI.createButton({
+	width:Ti.UI.SIZE,
+	height:35,
+	top:15,
+	title:"Twitter Request (selected account)"
+});
+btnContainer.add(tweetRequestSelectedBtn);
+
 var weibobtn = Ti.UI.createButton({
-    width:150,
+    width:200,
     height:35,
     top:15,
     title:"Sina Weibo"
@@ -43,7 +51,7 @@ var weibobtn = Ti.UI.createButton({
 btnContainer.add(weibobtn);
 
 var activitybtn = Ti.UI.createButton({
-    width:150,
+    width:200,
     height:35,
     top:15,
     title:"Activity View"
@@ -77,6 +85,30 @@ if (Titanium.Platform.name == 'iPhone OS'){
     Ti.API.info("Facebook available: " + Social.isFacebookSupported());
     Ti.API.info("Twitter available: " + Social.isTwitterSupported());
     Ti.API.info("SinaWeibo available: " + Social.isSinaWeiboSupported());
+    
+    // find all Twitter accounts on this phone
+    if(Social.isRequestTwitterSupported()){ //min iOS6 required
+	    var accounts = []; 
+	    Social.addEventListener("accountList", function(e){
+	    	Ti.API.info("Twitter accounts:");
+	    	accounts = e.accounts; //accounts
+	    	Ti.API.info(accounts);
+	    });
+	    
+	    Social.twitterAccountList();
+    }
+    
+    tweetRequestSelectedBtn.addEventListener("click", function(e){
+    	if(Social.isRequestTwitterSupported()){ //min iOS6 required
+			Social.requestTwitter({
+				requestType:"GET",
+				url:"https://api.twitter.com/1/statuses/mentions.json",
+				accountWithIdentifier: accounts[0].identifier //this first user
+			}, {
+				screen_name: accounts[0].username
+			});
+		}
+    });
     
 	fbbtn.addEventListener("click", function(){	
 		if(Social.isFacebookSupported()){ //min iOS6 required

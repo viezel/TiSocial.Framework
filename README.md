@@ -45,7 +45,8 @@ Each of these options is optional
 
 * *requestType* - can be *GET*, *POST* or *DELETE*
 * *url* - the url you want to request
-* *callbackEvent* - optional - default: *facebookRequest* - how is the event called that is fired after request has succeeded?
+* *callbackEvent* - optional - default: *twitterRequest* - how is the event called that is fired after request has succeeded?
+* *accountWithIdentifier* - Identifier to select which account to request twitter with.
 
 `requestParameter` is optional, but is build like this:
 
@@ -54,6 +55,11 @@ Each of these options is optional
 	}
 
 So *screen_name* is the parameter name / key and *C_BHole* is the value of the parameter
+
+#### Social.twitterAccountList()
+
+returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
+
 
 ### Facebook
 
@@ -132,6 +138,9 @@ Please check the *Example* section in the file.
 
 
 ## Changelog
+
+**v1.5.4**
+Added `twitterAccountList()` and `accountWithIdentifier`.
 
 **v1.5.3**
 Added UIActivityViewController popOver for iPad use: `activityPopover()`.  

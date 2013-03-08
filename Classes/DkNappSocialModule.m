@@ -62,6 +62,7 @@
 {
 	// release any resources that have been retained by the module
     RELEASE_TO_NIL(popoverController);
+    RELEASE_TO_NIL(accountStore);
 	[super dealloc];
 }
 
@@ -183,6 +184,42 @@
 }
 
 
+/*
+ * Accounts
+ */
+-(id)twitterAccountList:(id)args
+{
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierTwitter];
+    
+    // request access
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+         if (granted == YES) {
+             NSArray * arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+             [arrayOfAccounts retain];
+             
+             NSMutableArray *accounts = [[NSMutableArray alloc] init];
+             NSMutableDictionary * dictAccounts = [[NSMutableDictionary alloc] init];
+             for( int i = 0; i < [arrayOfAccounts count]; i++ )
+             {
+                 ACAccount * account = [arrayOfAccounts objectAtIndex:i];
+                 NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [NSString stringWithString:account.username], @"username",
+                                        [NSString stringWithString:account.identifier], @"identifier",
+                                        nil];
+                 [accounts addObject:dict];
+             }
+             [dictAccounts setObject:accounts forKey:@"accounts"];
+             [self fireEvent:@"accountList" withObject:dictAccounts];
+         } else {
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",nil];
+             [self fireEvent:@"error" withObject:event];
+         }
+    }];
+    
+}
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
@@ -377,7 +414,7 @@
 }
 
 /**
- * args[0] - requestType, url
+ * args[0] - requestType, url, accountWithIdentifier
  * args[1] - requestParameter
  *
  */
@@ -404,7 +441,21 @@
             NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
             
             if ([arrayOfAccounts count] > 0) {
-                ACAccount *twitterAccount = [arrayOfAccounts lastObject];
+                NSString *selectedAccount = [TiUtils stringValue:@"accountWithIdentifier" properties:arguments def:nil];
+                ACAccount *twitterAccount;
+                if(selectedAccount !=nil){
+                    //user selected
+                    twitterAccount = [accountStore accountWithIdentifier:selectedAccount];
+                    if(twitterAccount == nil){
+                        //fallback
+                        NSLog(@"[ERROR] Account with identifier does not exist");
+                        twitterAccount = [arrayOfAccounts lastObject];
+                    }
+                } else {
+                    //use last account in array
+                    twitterAccount = [arrayOfAccounts lastObject];
+                }
+                
                 
                 //requestType: GET, POST, DELETE
                 NSInteger requestMethod = SLRequestMethodPOST;
@@ -464,6 +515,8 @@
     ENSURE_UI_THREAD(sinaweibo, args);
     [self shareToNetwork:SLServiceTypeSinaWeibo args:args];
 }
+
+
 
 
 
