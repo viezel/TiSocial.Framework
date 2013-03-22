@@ -214,11 +214,10 @@
              [dictAccounts setObject:accounts forKey:@"accounts"];
              [self fireEvent:@"accountList" withObject:dictAccounts];
          } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
              [self fireEvent:@"error" withObject:event];
          }
     }];
-    
 }
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
@@ -311,6 +310,11 @@
             if ([arrayOfAccounts count] > 0) {
                 ACAccount *fbAccount = [arrayOfAccounts lastObject];
                 
+                
+                // Get the access token. It could be used in other scenarios
+                ACAccountCredential *fbCredential = [fbAccount credential];
+                NSString *accessToken = [fbCredential oauthToken];
+                
                 //requestType: GET, POST, DELETE
                 NSInteger facebookRequestMethod = SLRequestMethodPOST;
                 NSString *requestType = [[TiUtils stringValue:@"requestType" properties:arguments def:@"POST"] uppercaseString];
@@ -345,7 +349,7 @@
                         }
                         
                         NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
-                        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", nil];
+                        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", accessToken,@"accessToken", nil];
                         [self fireEvent:callbackEventName withObject:event];
                     }];
                     
@@ -355,7 +359,7 @@
                 }
             }
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
             [self fireEvent:@"error" withObject:event];
         }
     }];
@@ -501,7 +505,7 @@
                 }
             }
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
             [self fireEvent:@"error" withObject:event];
         }
     }];

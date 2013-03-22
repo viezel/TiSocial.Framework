@@ -90,14 +90,14 @@ if (Titanium.Platform.name == 'iPhone OS'){
     if(Social.isRequestTwitterSupported()){ //min iOS6 required
 	    var accounts = []; 
 	    Social.addEventListener("accountList", function(e){
-	    	Ti.API.info("Twitter accounts:");
+	    	Ti.API.info("Accounts:");
 	    	accounts = e.accounts; //accounts
 	    	Ti.API.info(accounts);
 	    });
 	    
 	    Social.twitterAccountList();
     }
-    
+        
     tweetRequestSelectedBtn.addEventListener("click", function(e){
     	if(Social.isRequestTwitterSupported()){ //min iOS6 required
 			Social.requestTwitter({
@@ -132,7 +132,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
                 url:"https://graph.facebook.com/me",
                 appIdKey:"YOUR_FB_APP_ID",
                 callbackEvent: "facebookProfile",
-                permissionsKey: "publish_stream, email, read_stream, publish_checkins" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
+                permissionsKey: "email" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
 			}, {
                 fields: 'id,name,location'
 			});
@@ -220,7 +220,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	Social.addEventListener("facebookRequest", function(e){ //default callback
 		Ti.API.info("facebookRequest: "+e.success);	
-		Ti.API.info(e.response); //json
+		Ti.API.info(e); 
 	});
 	
 	Social.addEventListener("facebookProfile", function(e){
@@ -233,8 +233,8 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	});
 	
 	Social.addEventListener("error", function(e){
-		Ti.API.info("error: "+e.success);	
-		Ti.API.info(e.status);	
+		Ti.API.info("error:");	
+		Ti.API.info(e);	
 	});
 	
 	Social.addEventListener("cancelled", function(e){

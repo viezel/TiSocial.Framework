@@ -139,6 +139,10 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.5.5**
+Added Facebook accessToken output on `requestFacebook()`.
+Added better error handling. error eventListener return the reason as a string in e.message
+
 **v1.5.4**
 Added `twitterAccountList()` and `accountWithIdentifier`.
 
