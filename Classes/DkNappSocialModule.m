@@ -355,12 +355,12 @@
                     
                 } else {
                     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status",nil];
-                    [self fireEvent:@"error" withObject:event];
+                    [self fireEvent:@"fb:error" withObject:event];
                 }
             }
         } else {
             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
-            [self fireEvent:@"error" withObject:event];
+            [self fireEvent:@"fb:error" withObject:event];
         }
     }];
 }
@@ -501,12 +501,12 @@
                     
                 } else {
                     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status",nil];
-                    [self fireEvent:@"error" withObject:event];
+                    [self fireEvent:@"twitter:error" withObject:event];
                 }
             }
         } else {
             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
-            [self fireEvent:@"error" withObject:event];
+            [self fireEvent:@"twitter:error" withObject:event];
         }
     }];
 }
