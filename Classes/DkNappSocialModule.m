@@ -10,6 +10,7 @@
 #import "TiHost.h"
 #import "TiUtils.h"
 #import "TiApp.h"
+#import "NappCustomActivity.h"
 
 
 //include Social and Accounts Frameworks
@@ -214,7 +215,7 @@
              [dictAccounts setObject:accounts forKey:@"accounts"];
              [self fireEvent:@"accountList" withObject:dictAccounts];
          } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message", @"twitter",@"platform",nil];
              [self fireEvent:@"error" withObject:event];
          }
     }];
@@ -268,6 +269,154 @@
     [self shareToNetwork:SLServiceTypeFacebook args:args];
 }
 
+-(void)grantFacebookPermissions:(id)args {
+    NSDictionary *arguments = [args objectAtIndex:0];
+    
+    NSArray *permissionsArray = nil;
+        
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+    
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
+    
+    NSString *appId = [arguments objectForKey:@"appIdKey"];
+    NSString *permissions = [arguments objectForKey:@"permissionsKey"];
+    
+    // Append permissions
+    if(permissions != nil) {
+        permissionsArray = [permissions componentsSeparatedByString:@","];
+    }
+    
+    NSDictionary *options = @{
+                              ACFacebookAppIdKey: appId,
+                              ACFacebookAudienceKey: ACFacebookAudienceEveryone,
+                              ACFacebookPermissionsKey: permissionsArray
+                              };
+    
+    // request access
+    [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
+        if (granted == YES) {
+            NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+            
+            if ([arrayOfAccounts count] > 0) {
+                ACAccount *fbAccount = [arrayOfAccounts lastObject];
+
+                // Get the access token. It could be used in other scenarios
+                ACAccountCredential *fbCredential = [fbAccount credential];
+                NSString *accessToken = [fbCredential oauthToken];
+                
+                NSDictionary * account = [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [NSString stringWithString:fbAccount.username], @"username",
+                                       [NSString stringWithString:fbAccount.identifier], @"identifier",
+                                       [NSString stringWithString:accessToken], @"accessToken",
+                                       nil];
+                
+                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: NUMBOOL(YES),@"success", account,@"account", @"facebook",@"platform", nil];
+                [self fireEvent:@"facebookAccount" withObject:event];
+                
+            } else {
+                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status", @"facebook",@"platform", nil];
+                [self fireEvent:@"error" withObject:event];
+            }
+        } else {
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Permission denied",@"status",[error localizedDescription], @"message", @"facebook",@"platform", nil];
+            [self fireEvent:@"error" withObject:event];
+        }
+    }];
+}
+
+-(void)renewFacebookAccessToken:(id)args {
+    if(accountStore == nil){
+        accountStore =  [[ACAccountStore alloc] init];
+    }
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
+    NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
+    if ([arrayOfAccounts count] > 0) {
+        ACAccount *fbAccount = [arrayOfAccounts lastObject];
+        [accountStore renewCredentialsForAccount:fbAccount completion:^(ACAccountCredentialRenewResult renewResult, NSError *error) {
+            if (error){
+                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"renew failed",@"status",[error localizedDescription], @"message", @"facebook",@"platform",nil];
+                [self fireEvent:@"error" withObject:event];
+            } else {
+                ACAccountCredential *fbCredential = [fbAccount credential];
+                NSString *accessToken = [fbCredential oauthToken];
+                NSDictionary * account = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [NSString stringWithString:fbAccount.username], @"username",
+                                          [NSString stringWithString:fbAccount.identifier], @"identifier",
+                                          [NSString stringWithString:accessToken], @"accessToken",
+                                          nil];
+                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: NUMBOOL(YES),@"success", account,@"account", @"facebook",@"platform", nil];
+                [self fireEvent:@"facebookAccount" withObject:event];
+            }
+        }];
+    } else {
+        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status", @"facebook",@"platform", nil];
+        [self fireEvent:@"error" withObject:event];
+    }
+}
+
+
+-(void)requestFacebookWithIdentifier:(id)args {
+    NSDictionary *arguments = [args objectAtIndex:0];
+    
+    // Defaults
+    NSDictionary *requestParameter = nil;
+    NSArray *permissionsArray = nil;
+    
+    if([args count] > 1){
+        requestParameter = [args objectAtIndex:1];
+    }
+    
+    NSString *selectedAccount = [TiUtils stringValue:@"accountWithIdentifier" properties:arguments def:nil];
+    NSString *callbackEventName = [TiUtils stringValue:@"callbackEvent" properties:arguments def:@"facebookRequest"];
+    
+    if(selectedAccount != nil){
+        //requestType: GET, POST, DELETE
+        NSInteger facebookRequestMethod = SLRequestMethodPOST;
+        NSString *requestType = [[TiUtils stringValue:@"requestType" properties:arguments def:@"POST"] uppercaseString];
+        
+        if( [requestType isEqualToString:@"POST"] ){
+            facebookRequestMethod = SLRequestMethodPOST;
+        } else if( [requestType isEqualToString:@"GET"] ){
+            facebookRequestMethod = SLRequestMethodGET;
+        } else if( [requestType isEqualToString:@"DELETE"] ) {
+            facebookRequestMethod = SLRequestMethodDELETE;
+        } else {
+            NSLog(@"[Social] no valid request method found - using POST");
+        }
+        
+        //args
+        NSString *requestURL = [arguments objectForKey:@"url"];
+        
+        if(requestURL != nil ){
+            SLRequest *fbRequest = [SLRequest requestForServiceType:SLServiceTypeFacebook requestMethod:facebookRequestMethod URL:[NSURL URLWithString:requestURL] parameters:requestParameter];
+            [fbRequest setAccount:[accountStore accountWithIdentifier:selectedAccount]];
+            [fbRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error){
+                NSNumber *isSuccess;
+                
+                if ([urlResponse statusCode] == 200) {
+                    isSuccess = NUMBOOL(YES);
+                } else {
+                    isSuccess = NUMBOOL(NO);
+                }
+                
+                NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
+                NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", @"facebook",@"platform", nil];
+                [self fireEvent:callbackEventName withObject:event];
+            }];
+            
+        } else {
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status", @"facebook",@"platform", nil];
+            [self fireEvent:@"error" withObject:event];
+        }
+        
+    } else {
+        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status", @"facebook",@"platform", nil];
+        [self fireEvent:@"error" withObject:event];
+    }
+    
+}
 
 -(void)requestFacebook:(id)args{
     NSDictionary *arguments = [args objectAtIndex:0];
@@ -338,7 +487,9 @@
                                                                    requestMethod:facebookRequestMethod
                                                                              URL:[NSURL URLWithString:requestURL]
                                                                       parameters:requestParameter];
+                    
                     [fbRequest setAccount:fbAccount];
+                    
                     [fbRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error){
                         NSNumber *isSuccess;
                                         
@@ -349,17 +500,17 @@
                         }
                         
                         NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
-                        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", accessToken,@"accessToken", nil];
+                        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", accessToken,@"accessToken", @"facebook",@"platform", nil];
                         [self fireEvent:callbackEventName withObject:event];
                     }];
                     
                 } else {
-                    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status",nil];
+                    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status", @"facebook",@"platform", nil];
                     [self fireEvent:@"error" withObject:event];
                 }
             }
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message", @"facebook",@"platform", nil];
             [self fireEvent:@"error" withObject:event];
         }
     }];
@@ -401,10 +552,10 @@
             tweetSheet.completionHandler = ^(TWTweetComposeViewControllerResult result) {
 	
 			    if (result == TWTweetComposeViewControllerResultCancelled) {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"twitter",@"platform",nil];
 			        [self fireEvent:@"cancelled" withObject:event];
 			    } else {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",@"twitter",@"platform",nil];
 			        [self fireEvent:@"complete" withObject:event];
 			    }
 	
@@ -495,17 +646,17 @@
                          //NSString *response = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                          NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                          NSString *rawData = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", rawData,@"rawResponse", nil];
+                         NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", rawData,@"rawResponse", @"twitter",@"platform", nil];
                          [self fireEvent:callbackEventName withObject:event];
                      }];
                     
                 } else {
-                    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status",nil];
+                    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"Missing arguments",@"status", @"twitter",@"platform",nil];
                     [self fireEvent:@"error" withObject:event];
                 }
             }
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message",  @"twitter",@"platform", nil];
             [self fireEvent:@"error" withObject:event];
         }
     }];
@@ -534,16 +685,47 @@
 
 -(void)activityView:(id)args{
     ENSURE_UI_THREAD(activityView, args);
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    NSDictionary *arguments = nil;
+    NSArray *customActivities = nil;
+    
+    if([args count] > 1){
+        customActivities = [args objectAtIndex:1];
+        arguments = [args objectAtIndex:0];
+    } else {
+        arguments = args;
+    }
     
     //get the properties from javascript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
+    NSString * shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString * shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     UIImage *image = [self findImage:shareImage];
-    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image , nil];
+    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+    
+    NSMutableArray * activities = [[NSMutableArray alloc] init];
+    if(customActivities != nil){
+        //custom activity
+        for( int i = 0; i < [customActivities count]; i++ ) {
+            NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
+            NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
+            NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [TiUtils stringValue:@"type" properties:activityDictionary def:@""],@"type",
+                                             [TiUtils stringValue:@"title" properties:activityDictionary def:@""],@"title",
+                                             [self findImage:activityImage],@"image",
+                                             self, @"module",
+                                             nil];
+
+            NappCustomActivity * nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
+            [activities addObject:nappActivity];
+            
+        }
+        avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+        
+    } 
+    
     
     //custom icons
     if(removeIcons != nil){
@@ -554,10 +736,10 @@
     [avc setCompletionHandler:^(NSString *act, BOOL done)
      {
          if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityView",@"platform", nil];
              [self fireEvent:@"cancelled" withObject:event];
          } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityView",@"platform",nil];
              [self fireEvent:@"complete" withObject:event];
          }   
      }];
@@ -569,7 +751,7 @@
 -(void)activityPopover:(id)args
 {
     if(![TiUtils isIPad]){
-        NSLog(@"[ERROR] activityPopover is iPad Only feature");
+        NSLog(@"[ERROR] activityPopover is an iPad Only feature");
         return;
     }
     
@@ -593,7 +775,8 @@
         return;
     }
     UIImage *image = [self findImage:shareImage];
-    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image , nil];
+    
+    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
@@ -606,10 +789,10 @@
     [avc setCompletionHandler:^(NSString *act, BOOL done)
      {
          if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityPopover",@"platform", nil];
              [self fireEvent:@"cancelled" withObject:event];
          } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityPopover",@"platform", nil];
              [self fireEvent:@"complete" withObject:event];
          }
      }];
@@ -645,10 +828,9 @@
                                   @"contact": UIActivityTypeAssignToContact,
                                   @"weibo": UIActivityTypePostToWeibo,
                                   @"print": UIActivityTypePrint,
-                                  @"camera": UIActivityTypeSaveToCameraRoll
-                                  
+                                  @"camera": UIActivityTypeSaveToCameraRoll           
                                   };
-    
+
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
     NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
     for( int i = 0; i < [icons count]; i++ )

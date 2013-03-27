@@ -29,6 +29,8 @@
 		69B6065A15A4DC5600AB991D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69B6065715A4DC4800AB991D /* Social.framework */; };
 		AA747D9F0F9514B9006C5449 /* DkNappSocial_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		B603B54D1700E18B002E4196 /* NappCustomActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = B603B54B1700E18B002E4196 /* NappCustomActivity.h */; };
+		B603B54E1700E18B002E4196 /* NappCustomActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = B603B54C1700E18B002E4196 /* NappCustomActivity.m */; };
 		B66EFA9116137E8100A5A9B4 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66EFA9016137E8100A5A9B4 /* Accounts.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +53,8 @@
 		69B6065715A4DC4800AB991D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DkNappSocial_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B603B54B1700E18B002E4196 /* NappCustomActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NappCustomActivity.h; path = Classes/NappCustomActivity.h; sourceTree = "<group>"; };
+		B603B54C1700E18B002E4196 /* NappCustomActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NappCustomActivity.m; path = Classes/NappCustomActivity.m; sourceTree = "<group>"; };
 		B66EFA9016137E8100A5A9B4 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libDkNappSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDkNappSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -105,6 +109,8 @@
 				24DE9E1011C5FE74003F90F6 /* DkNappSocialModuleAssets.m */,
 				24DD6CF71134B3F500162E58 /* DkNappSocialModule.h */,
 				24DD6CF81134B3F500162E58 /* DkNappSocialModule.m */,
+				B603B54B1700E18B002E4196 /* NappCustomActivity.h */,
+				B603B54C1700E18B002E4196 /* NappCustomActivity.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -128,6 +134,7 @@
 				AA747D9F0F9514B9006C5449 /* DkNappSocial_Prefix.pch in Headers */,
 				24DD6CF91134B3F500162E58 /* DkNappSocialModule.h in Headers */,
 				24DE9E1111C5FE74003F90F6 /* DkNappSocialModuleAssets.h in Headers */,
+				B603B54D1700E18B002E4196 /* NappCustomActivity.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,6 +207,7 @@
 			files = (
 				24DD6CFA1134B3F500162E58 /* DkNappSocialModule.m in Sources */,
 				24DE9E1211C5FE74003F90F6 /* DkNappSocialModuleAssets.m in Sources */,
+				B603B54E1700E18B002E4196 /* NappCustomActivity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
