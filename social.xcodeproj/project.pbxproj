@@ -265,6 +265,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
@@ -307,6 +308,7 @@
 				PRODUCT_NAME = DkNappSocial;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
@@ -353,6 +355,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
@@ -394,6 +397,7 @@
 				PRODUCT_NAME = DkNappSocial;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
@@ -406,6 +410,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "Build & test";
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 			};
 			name = Debug;
 		};
@@ -417,6 +422,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "Build & test";
+				TITANIUM_SDK = "/Library/Application\\ Support/Titanium/mobilesdk/osx/$(TITANIUM_SDK_VERSION)";
 				ZERO_LINK = NO;
 			};
 			name = Release;
