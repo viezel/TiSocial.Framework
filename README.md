@@ -57,9 +57,16 @@ Each of these options is optional
 So *screen_name* is the parameter name / key and *C_BHole* is the value of the parameter
 
 #### Social.twitterAccountList()
+Returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
 
-returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
-
+```javascript
+Social.addEventListener("accountList", function(e){
+	Ti.API.info("Accounts:");
+	accounts = e.accounts; //accounts
+	Ti.API.info(accounts);
+});
+Social.twitterAccountList();
+```
 
 ### Facebook
 
@@ -93,6 +100,44 @@ Each of these options is optional
 
 So *fields* is the parameter name / key and *id,name,devices* is the value of the parameter
 
+#### Social.grantFacebookPermissions
+Before you can send request to the Facebook API, you start by getting the users permissions. 
+
+```javascript
+var fbAccount;
+Social.grantFacebookPermissions({
+    appIdKey:"YOUR_FB_APP_ID",
+    permissionsKey: "email" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
+});
+Social.addEventListener("facebookAccount", function(e){ 
+	fbAccount = e.account; //now you have stored the FB account. You can then request facebook using the below method 
+});
+```
+
+#### Social.requestFacebookWithIdentifier(*{Object} options [, {Object} requestParameter]*)
+
+Request Facebook with a specific account.
+
+```javascript
+Social.requestFacebookWithIdentifier({
+    requestType:"GET",
+    accountWithIdentifier: fbAccount["identifier"], //start by granting facebook permissions 
+    url:"https://graph.facebook.com/me",
+    callbackEvent: "facebookProfile",
+}, {
+    fields: 'id,name,location'
+});
+```
+
+#### Social.renewFacebookAccessToken
+
+The accessToken will eventually be invalid, if you store the FB acccount in a App property or storage of some kind. This method can renew the accessToken, and make you able to request Facebook again. 
+This method rely on the same *facebookAccount* eventlistener, as `grantFacebookPermissions`. 
+
+```javascript
+Social.renewFacebookAccessToken();
+```
+
 ### Sina Weibo
 
 #### Social.isSinaWeiboSupported()
@@ -118,6 +163,28 @@ Each of these options is optional
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 
+The second argument is an array with objects. This argument is optional. Use this to create custom UIActivities. 
+The posibilties are almost endless. have a look at: *http://uiactivities.com* for inspiration.
+
+```javascript
+Social.activityView({
+    text:"share like a king!",
+    image:"pin.png",
+    removeIcons:"print,sms,copy,contact,camera,mail"
+},[
+	{
+		title:"Custom Share",
+		type:"hello.world",
+		image:"pin.png"
+	},
+	{
+		title:"Open in Safari",
+		type:"open.safari",
+		image:"safari.png"
+	}
+]);
+```
+
 #### Social.activityPopover() (iPad only)
 `options` can have the following keys:
 
@@ -139,24 +206,29 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
-**v1.5.5**
-Added Facebook accessToken output on `requestFacebook()`.
-Added better error handling. error eventListener return the reason as a string in e.message
+**v1.6.0**  
+Added custom UIActivity. You can create your own sharing option for activityView in seconds.   
+Added `grantFacebookPermissions()`, `renewFacebookAccessToken()` and `requestFacebookWithIdentifier()` for giving you a greater control of when to promt the enduser with permissions.  
+Added platform property to objects returned to eventListeners. Twiiter, Facebook and activityView.  
 
-**v1.5.4**
-Added `twitterAccountList()` and `accountWithIdentifier`.
+**v1.5.5**  
+Added Facebook accessToken output on `requestFacebook()`.  
+Added better error handling. error eventListener return the reason as a string in e.message.  
 
-**v1.5.3**
-Added UIActivityViewController popOver for iPad use: `activityPopover()`.  
+**v1.5.4**  
+Added `twitterAccountList()` and `accountWithIdentifier`.  
 
-**v1.5.2**
-Added raw data callback response for `requestTwitter()`.  
+**v1.5.3**  
+Added UIActivityViewController popOver for iPad use: `activityPopover()`.    
 
-**v1.5.1**
-Bugfixes.
-Added `isRequestTwitterSupported()` for iOS6 check
+**v1.5.2**  
+Added raw data callback response for `requestTwitter()`.    
 
-**v1.5**
+**v1.5.1**  
+Bugfixes.  
+Added `isRequestTwitterSupported()` for iOS6 check.  
+
+**v1.5**  
 UIActivityViewController implemented.
 Improved image filepath finder (bundle, data, remote, url)
 
@@ -164,17 +236,17 @@ Improved image filepath finder (bundle, data, remote, url)
 Support for iOS5 Twiiter Framework.
 
 **v1.3**  
-Different parameter setup for `requestFacebook()` and `requestTwitter()`.  
-Now supporting Wall posting and more request parameter.
+Different parameter setup for `requestFacebook()` and `requestTwitter()`.    
+Now supporting Wall posting and more request parameter.  
 
-**v1.2**  
-Added support to share image from downloaded remote images in cache or documents folders.
-Added support to share image from image urls. 
+**v1.2**    
+Added support to share image from downloaded remote images in cache or documents folders.  
+Added support to share image from image urls.   
 
-**v1.1**  
+**v1.1**    
 SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
 
-**v1.0**  
+**v1.0**    
 Initial Implementation of SLComposeViewController. 
 
 
