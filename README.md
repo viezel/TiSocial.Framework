@@ -206,6 +206,10 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.6.1**  
+Added userId to `twitterAccountList()`  
+Bugfix for Twitter iOS5 error handling.
+
 **v1.6.0**  
 Added custom UIActivity. You can create your own sharing option for activityView in seconds.   
 Added `grantFacebookPermissions()`, `renewFacebookAccessToken()` and `requestFacebookWithIdentifier()` for giving you a greater control of when to promt the enduser with permissions.  

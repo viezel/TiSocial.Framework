@@ -206,7 +206,9 @@
              for( int i = 0; i < [arrayOfAccounts count]; i++ )
              {
                  ACAccount * account = [arrayOfAccounts objectAtIndex:i];
+                 NSString *userID = [[account valueForKey:@"properties"] valueForKey:@"user_id"];
                  NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        userID, @"userId",
                                         [NSString stringWithString:account.username], @"username",
                                         [NSString stringWithString:account.identifier], @"identifier",
                                         nil];
@@ -564,6 +566,9 @@
             };
             
             [[TiApp app] showModalController:tweetSheet animated:YES];
+        } else {
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"cannot send tweet",@"status", @"twitter",@"platform", nil];
+            [self fireEvent:@"error" withObject:event];
         }
     }
 }
