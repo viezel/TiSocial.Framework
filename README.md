@@ -166,10 +166,11 @@ Each of these options is optional
 * **ACTIVITY_COPY**: UIActivityTypeCopyToPasteboard
 * **ACTIVITY_ASSIGN_CONTATCT**: UIActivityTypeAssignToContact
 * **ACTIVITY_SAVE_CAMERA**: UIActivityTypeSaveToCameraRoll
+* **ACTIVITY_CUSTOM**: Custom Activities
 
 ### Events
 
-* **complete**: Fired when user complete using a Activity. Here, you can verify witch activity user have choiced by *activity* event property.
+* **complete**: Fired when user complete using a Activity. Here, you can verify witch activity user have choiced by *activity* event property. When dealing with customActivities, you can get the *activityName* property.
 * **cancelled**: Fired when user not completed request.
 
 ### Social.activityView()
