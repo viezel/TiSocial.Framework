@@ -838,7 +838,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 			
 			NSDictionary *event = @{
 				@"success": @YES,
-				@"platform": @"activityView",
+				@"platform": @"activityPopover",
 				@"activity": NUMINT(activity),
 				@"activityName": act
 			};
