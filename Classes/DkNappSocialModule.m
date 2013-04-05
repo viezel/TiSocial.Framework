@@ -12,7 +12,6 @@
 #import "TiApp.h"
 #import "NappCustomActivity.h"
 
-
 //include Social and Accounts Frameworks
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
@@ -21,6 +20,18 @@
 #import <Twitter/Twitter.h>
 
 @implementation DkNappSocialModule
+
+# pragma mark Activties
+
+MAKE_SYSTEM_PROP(ACTIVITY_FACEBOOK, UIActivityTypePostToFacebook);
+MAKE_SYSTEM_PROP(ACTIVITY_TWITTER, UIActivityTypePostToTwitter);
+MAKE_SYSTEM_PROP(ACTIVITY_WEIBO, UIActivityTypePostToWeibo);
+MAKE_SYSTEM_PROP(ACTIVITY_MESSAGE, UIActivityTypeMessage);
+MAKE_SYSTEM_PROP(ACTIVITY_MAIL, UIActivityTypeMail);
+MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
+MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
+MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTATCT, UIActivityTypeAssignToContact);
+MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 
 #pragma mark Internal
 
@@ -532,8 +543,7 @@
     if(NSClassFromString(@"SLComposeViewController") != nil){
         [self shareToNetwork:SLServiceTypeTwitter args:args];
     }else{
-        //iOS5 Support
-        
+        // iOS5 Support
         ENSURE_SINGLE_ARG(args, NSDictionary);
         
         if ([TWTweetComposeViewController canSendTweet])
@@ -701,7 +711,7 @@
         arguments = args;
     }
     
-    //get the properties from javascript
+    // Get Properties from JavaScript
     NSString * shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
     NSString * shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
@@ -732,22 +742,28 @@
     } 
     
     
-    //custom icons
+    // Custom Icons
     if(removeIcons != nil){
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
-    [avc setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityView",@"platform", nil];
-             [self fireEvent:@"cancelled" withObject:event];
-         } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityView",@"platform",nil];
-             [self fireEvent:@"complete" withObject:event];
-         }   
-     }];
+    [avc setCompletionHandler:^(NSString *act, BOOL done) {
+		if (!done) {
+			NSDictionary *event = @{
+				@"success": @NO,
+				@"platform": @"activityView",
+			};
+			[self fireEvent:@"cancelled" withObject:event];
+		} else {
+			NSDictionary *event = @{
+				@"success": @YES,
+				@"platform": @"activityView",
+				@"activity": NUMINT(act)
+			};
+			[self fireEvent:@"complete" withObject:event];
+		}
+	}];
     
     [[TiApp app] showModalController:avc animated:YES];
 }
@@ -785,24 +801,30 @@
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
-    //custom icons
+    // Custom Icons
     if(removeIcons != nil){
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
-    [avc setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityPopover",@"platform", nil];
-             [self fireEvent:@"cancelled" withObject:event];
-         } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityPopover",@"platform", nil];
-             [self fireEvent:@"complete" withObject:event];
-         }
-     }];
+	[avc setCompletionHandler:^(NSString *act, BOOL done) {
+		if (!done) {
+			NSDictionary *event = @{
+				@"success": @NO,
+				@"platform": @"activityPopover",
+			};
+			[self fireEvent:@"cancelled" withObject:event];
+		} else {
+			NSDictionary *event = @{
+				@"success": @YES,
+				@"platform": @"activityPopover",
+				@"activity": NUMINT(act)
+			};
+			[self fireEvent:@"complete" withObject:event];
+		}
+	}];
     
-    //popOver
+    // popOver
     popoverController = [[UIPopoverController alloc] initWithContentViewController:avc];
     if(passthroughViews != nil){
         [self setPassthroughViews:passthroughViews];
