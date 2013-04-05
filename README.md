@@ -25,13 +25,13 @@ Simply add the following lines to your `tiapp.xml` file:
 
 For more detailed code examples take a look into the example app
 
-### Twitter
+## Twitter
 
-#### Social.isTwitterSupported()
+### Social.isTwitterSupported()
 Returns *true* or *false*.  
 false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
 
-#### Social.twitter(*{Object} options*)
+### Social.twitter(*{Object} options*)
 `options` can have the following keys:
 
 * *text* - the status message
@@ -40,7 +40,7 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 
 Each of these options is optional
 
-#### Social.twitterRequest(*{Object} options [, {Object} requestParameter]*)
+### Social.twitterRequest(*{Object} options [, {Object} requestParameter]*)
 `options`has the following keys:
 
 * *requestType* - can be *GET*, *POST* or *DELETE*
@@ -56,7 +56,7 @@ Each of these options is optional
 
 So *screen_name* is the parameter name / key and *C_BHole* is the value of the parameter
 
-#### Social.twitterAccountList()
+### Social.twitterAccountList()
 Returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
 
 ```javascript
@@ -68,13 +68,13 @@ Social.addEventListener("accountList", function(e){
 Social.twitterAccountList();
 ```
 
-### Facebook
+## Facebook
 
-#### Social.isFacebookSupported()
+### Social.isFacebookSupported()
 Returns *true* or *false*.  
 false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
 
-#### Social.facebook(*{Object} options*)
+### Social.facebook(*{Object} options*)
 `options` can have the following keys:
 
 * *text* - the status message
@@ -83,7 +83,7 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 
 Each of these options is optional
 
-#### Social.facebookRequest(*{Object} options [, {Object} requestParameter]*)
+### Social.facebookRequest(*{Object} options [, {Object} requestParameter]*)
 `options` has the following keys:
 
 * *requestType* - can be *GET*, *POST* or *DELETE*
@@ -100,7 +100,7 @@ Each of these options is optional
 
 So *fields* is the parameter name / key and *id,name,devices* is the value of the parameter
 
-#### Social.grantFacebookPermissions
+### Social.grantFacebookPermissions
 Before you can send request to the Facebook API, you start by getting the users permissions. 
 
 ```javascript
@@ -114,7 +114,7 @@ Social.addEventListener("facebookAccount", function(e){
 });
 ```
 
-#### Social.requestFacebookWithIdentifier(*{Object} options [, {Object} requestParameter]*)
+### Social.requestFacebookWithIdentifier(*{Object} options [, {Object} requestParameter]*)
 
 Request Facebook with a specific account.
 
@@ -129,7 +129,7 @@ Social.requestFacebookWithIdentifier({
 });
 ```
 
-#### Social.renewFacebookAccessToken
+### Social.renewFacebookAccessToken
 
 The accessToken will eventually be invalid, if you store the FB acccount in a App property or storage of some kind. This method can renew the accessToken, and make you able to request Facebook again. 
 This method rely on the same *facebookAccount* eventlistener, as `grantFacebookPermissions`. 
@@ -138,13 +138,13 @@ This method rely on the same *facebookAccount* eventlistener, as `grantFacebookP
 Social.renewFacebookAccessToken();
 ```
 
-### Sina Weibo
+## Sina Weibo
 
-#### Social.isSinaWeiboSupported()
+### Social.isSinaWeiboSupported()
 Returns *true* or *false*.  
 false if no account has been defined (true in the 6.0 simulator) or the iOS Version doesn't support the Social Framework.
 
-#### Social.sinaweibo(*{Object} options*)
+### Social.sinaweibo(*{Object} options*)
 `options` can have the following keys:
 
 * *text* - the status message
@@ -153,10 +153,27 @@ false if no account has been defined (true in the 6.0 simulator) or the iOS Vers
 
 Each of these options is optional
 
+## UIActivityViewController
 
-### UIActivityViewController
+### Constants
 
-#### Social.activityView()
+* **ACTIVITY_FACEBOOK**: UIActivityTypePostToFacebook
+* **ACTIVITY_TWITTER**: UIActivityTypePostToTwitter
+* **ACTIVITY_WEIBO**: UIActivityTypePostToWeibo
+* **ACTIVITY_MESSAGE**: UIActivityTypeMessage
+* **ACTIVITY_MAIL**: UIActivityTypeMail
+* **ACTIVITY_PRINT**: UIActivityTypePrint
+* **ACTIVITY_COPY**: UIActivityTypeCopyToPasteboard
+* **ACTIVITY_ASSIGN_CONTATCT**: UIActivityTypeAssignToContact
+* **ACTIVITY_SAVE_CAMERA**: UIActivityTypeSaveToCameraRoll
+* **ACTIVITY_CUSTOM**: Custom Activities
+
+### Events
+
+* **complete**: Fired when user complete using a Activity. Here, you can verify witch activity user have choiced by *activity* event property. When dealing with customActivities, you can get the *activityName* property.
+* **cancelled**: Fired when user not completed request.
+
+### Social.activityView()
 `options` can have the following keys:
 
 * *text* - the status message
@@ -185,7 +202,7 @@ Social.activityView({
 ]);
 ```
 
-#### Social.activityPopover() (iPad only)
+### Social.activityPopover() (iPad only)
 `options` can have the following keys:
 
 * *text* - the status message
@@ -196,7 +213,7 @@ Social.activityView({
 
 ## Example of usage
 
-#### FollowMe Button
+### FollowMe Button
 `example/follow_on_twitter.js` contains an example on how to implement a "Follow Me" button.
 It takes an account the os version and for iOS 5 will try to open the profile page in another application that exits on the device.
 
@@ -206,52 +223,71 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.7**
+
+* Added support to verify what activity was choiced by user in *complete* event
+* Create constants to each default activity
+* Documentation changes
+
 **v1.6.1**  
-Added userId to `twitterAccountList()`  
-Bugfix for Twitter iOS5 error handling.
+
+* Added userId to `twitterAccountList()`  
+* Bugfix for Twitter iOS5 error handling.
 
 **v1.6.0**  
-Added custom UIActivity. You can create your own sharing option for activityView in seconds.   
-Added `grantFacebookPermissions()`, `renewFacebookAccessToken()` and `requestFacebookWithIdentifier()` for giving you a greater control of when to promt the enduser with permissions.  
-Added platform property to objects returned to eventListeners. Twiiter, Facebook and activityView.  
+
+* Added custom UIActivity. You can create your own sharing option for activityView in seconds.   
+* Added `grantFacebookPermissions()`, `renewFacebookAccessToken()` and `requestFacebookWithIdentifier()` for giving you a greater control of when to promt the enduser with permissions.  
+* Added platform property to objects returned to eventListeners. Twiiter, Facebook and activityView.  
 
 **v1.5.5**  
-Added Facebook accessToken output on `requestFacebook()`.  
-Added better error handling. error eventListener return the reason as a string in e.message.  
+
+* Added Facebook accessToken output on `requestFacebook()`.  
+* Added better error handling. error eventListener return the reason as a string in e.message.  
 
 **v1.5.4**  
-Added `twitterAccountList()` and `accountWithIdentifier`.  
+
+* Added `twitterAccountList()` and `accountWithIdentifier`.  
 
 **v1.5.3**  
-Added UIActivityViewController popOver for iPad use: `activityPopover()`.    
+
+* Added UIActivityViewController popOver for iPad use: `activityPopover()`.    
 
 **v1.5.2**  
-Added raw data callback response for `requestTwitter()`.    
+
+* Added raw data callback response for `requestTwitter()`.    
 
 **v1.5.1**  
-Bugfixes.  
-Added `isRequestTwitterSupported()` for iOS6 check.  
+
+* Bugfixes.  
+* Added `isRequestTwitterSupported()` for iOS6 check.  
 
 **v1.5**  
-UIActivityViewController implemented.
-Improved image filepath finder (bundle, data, remote, url)
+
+* UIActivityViewController implemented.
+* Improved image filepath finder (bundle, data, remote, url)
 
 **v1.4**  
-Support for iOS5 Twiiter Framework.
+
+* Support for iOS5 Twiiter Framework.
 
 **v1.3**  
-Different parameter setup for `requestFacebook()` and `requestTwitter()`.    
-Now supporting Wall posting and more request parameter.  
+
+* Different parameter setup for `requestFacebook()` and `requestTwitter()`.    
+* Now supporting Wall posting and more request parameter.  
 
 **v1.2**    
-Added support to share image from downloaded remote images in cache or documents folders.  
-Added support to share image from image urls.   
+
+* Added support to share image from downloaded remote images in cache or documents folders.  
+* Added support to share image from image urls.   
 
 **v1.1**    
-SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
+
+* SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
 
 **v1.0**    
-Initial Implementation of SLComposeViewController. 
+
+* Initial Implementation of SLComposeViewController. 
 
 
 ## Author
@@ -271,6 +307,9 @@ twitter: @yomybaby
 
 **Daniel Tamas**  
 twitter: @dan_tamas
+
+**Rafael Kellermann Streit**  
+twitter: @rafaelks
 
 ## License
 

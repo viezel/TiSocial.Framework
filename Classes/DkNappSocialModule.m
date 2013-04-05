@@ -12,7 +12,6 @@
 #import "TiApp.h"
 #import "NappCustomActivity.h"
 
-
 //include Social and Accounts Frameworks
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
@@ -21,6 +20,19 @@
 #import <Twitter/Twitter.h>
 
 @implementation DkNappSocialModule
+
+# pragma mark Activties
+
+MAKE_SYSTEM_PROP(ACTIVITY_FACEBOOK, UIActivityTypePostToFacebook);
+MAKE_SYSTEM_PROP(ACTIVITY_TWITTER, UIActivityTypePostToTwitter);
+MAKE_SYSTEM_PROP(ACTIVITY_WEIBO, UIActivityTypePostToWeibo);
+MAKE_SYSTEM_PROP(ACTIVITY_MESSAGE, UIActivityTypeMessage);
+MAKE_SYSTEM_PROP(ACTIVITY_MAIL, UIActivityTypeMail);
+MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
+MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
+MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTATCT, UIActivityTypeAssignToContact);
+MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
+MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 #pragma mark Internal
 
@@ -532,8 +544,7 @@
     if(NSClassFromString(@"SLComposeViewController") != nil){
         [self shareToNetwork:SLServiceTypeTwitter args:args];
     }else{
-        //iOS5 Support
-        
+        // iOS5 Support
         ENSURE_SINGLE_ARG(args, NSDictionary);
         
         if ([TWTweetComposeViewController canSendTweet])
@@ -687,8 +698,7 @@
 ///////////////////////////////////////////////////////////////////
 
 
-
--(void)activityView:(id)args{
+-(void)activityView:(id)args {
     ENSURE_UI_THREAD(activityView, args);
     
     NSDictionary *arguments = nil;
@@ -698,64 +708,82 @@
         customActivities = [args objectAtIndex:1];
         arguments = [args objectAtIndex:0];
     } else {
-        arguments = args;
+        arguments = [args objectAtIndex:0];
     }
-    
-    //get the properties from javascript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
-    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+
+    // Get Properties from JavaScript
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     UIImage *image = [self findImage:shareImage];
     NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
+	// Custom Activities
     NSMutableArray * activities = [[NSMutableArray alloc] init];
-    if(customActivities != nil){
-        //custom activity
-        for( int i = 0; i < [customActivities count]; i++ ) {
+    if (customActivities != nil){
+        for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
             NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             [TiUtils stringValue:@"type" properties:activityDictionary def:@""],@"type",
-                                             [TiUtils stringValue:@"title" properties:activityDictionary def:@""],@"title",
-                                             [self findImage:activityImage],@"image",
-                                             self, @"module",
-                                             nil];
+				[TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
+				[TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
+				[self findImage:activityImage], @"image",
+				self, @"module",
+			nil];
 
-            NappCustomActivity * nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
+            NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
             [activities addObject:nappActivity];
             
         }
+
         avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
-        
     } 
     
     
-    //custom icons
-    if(removeIcons != nil){
+    // Custom Icons
+    if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
-    [avc setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityView",@"platform", nil];
-             [self fireEvent:@"cancelled" withObject:event];
-         } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityView",@"platform",nil];
-             [self fireEvent:@"complete" withObject:event];
-         }   
-     }];
+	// Completion Block Handler
+    [avc setCompletionHandler:^(NSString *act, BOOL done) {
+		if (!done) {
+			NSDictionary *event = @{
+				@"success": @NO,
+				@"platform": @"activityView",
+			};
+			[self fireEvent:@"cancelled" withObject:event];
+		} else {
+			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// to returns ACTIVITY_CUSTOM constant
+			NSInteger activity;
+			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+				activity = 100;
+			} else {
+				activity = act;
+			}
+
+			NSDictionary *event = @{
+				@"success": @YES,
+				@"platform": @"activityView",
+				@"activity": NUMINT(activity),
+				@"activityName": act
+			};
+			[self fireEvent:@"complete" withObject:event];
+		}
+	}];
     
+	// Show ActivityViewController
     [[TiApp app] showModalController:avc animated:YES];
 }
 
 
 -(void)activityPopover:(id)args
 {
-    if(![TiUtils isIPad]){
+    if (![TiUtils isIPad]) {
         NSLog(@"[ERROR] activityPopover is an iPad Only feature");
         return;
     }
@@ -768,45 +796,63 @@
         return;
     }
     
-    //get the properties from javascript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
-    NSArray * passthroughViews = [args objectForKey:@"passthroughViews"];
+    // Get Properties from JavaScript
+    NSString *shareText = [TiUtils stringValue:@"text" properties:args def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
+    NSArray *passthroughViews = [args objectForKey:@"passthroughViews"];
     UIBarButtonItem * senderButton = [args objectForKey:@"view"];
     
-    if(senderButton == nil){
+    if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
         return;
     }
+
     UIImage *image = [self findImage:shareImage];
-    
     NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
-    
+
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
-    //custom icons
-    if(removeIcons != nil){
+    // Custom Icons
+    if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
-    [avc setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         if (!done) {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success", @"activityPopover",@"platform", nil];
-             [self fireEvent:@"cancelled" withObject:event];
-         } else {
-             NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success", @"activityPopover",@"platform", nil];
-             [self fireEvent:@"complete" withObject:event];
-         }
-     }];
+	[avc setCompletionHandler:^(NSString *act, BOOL done) {
+		if (!done) {
+			NSDictionary *event = @{
+				@"success": @NO,
+				@"platform": @"activityPopover",
+			};
+			[self fireEvent:@"cancelled" withObject:event];
+		} else {
+			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// to returns ACTIVITY_CUSTOM constant
+			NSInteger activity;
+			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+				activity = 100;
+			} else {
+				activity = act;
+			}
+			
+			NSDictionary *event = @{
+				@"success": @YES,
+				@"platform": @"activityPopover",
+				@"activity": NUMINT(activity),
+				@"activityName": act
+			};
+			[self fireEvent:@"complete" withObject:event];
+		}
+	}];
     
-    //popOver
+    // popOver
     popoverController = [[UIPopoverController alloc] initWithContentViewController:avc];
-    if(passthroughViews != nil){
+
+	if (passthroughViews != nil) {
         [self setPassthroughViews:passthroughViews];
     }
+
     [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
@@ -825,25 +871,25 @@
 -(NSMutableArray *)activityIcons:(NSString *)removeIcons
 {
     NSDictionary *iconMapping = @{
-                                  @"twitter": UIActivityTypePostToTwitter,
-                                  @"facebook": UIActivityTypePostToFacebook,
-                                  @"mail": UIActivityTypeMail,
-                                  @"sms": UIActivityTypeMessage,
-                                  @"copy": UIActivityTypeCopyToPasteboard,
-                                  @"contact": UIActivityTypeAssignToContact,
-                                  @"weibo": UIActivityTypePostToWeibo,
-                                  @"print": UIActivityTypePrint,
-                                  @"camera": UIActivityTypeSaveToCameraRoll           
-                                  };
+		@"twitter": UIActivityTypePostToTwitter,
+		@"facebook": UIActivityTypePostToFacebook,
+		@"mail": UIActivityTypeMail,
+		@"sms": UIActivityTypeMessage,
+		@"copy": UIActivityTypeCopyToPasteboard,
+		@"contact": UIActivityTypeAssignToContact,
+		@"weibo": UIActivityTypePostToWeibo,
+		@"print": UIActivityTypePrint,
+		@"camera": UIActivityTypeSaveToCameraRoll
+	};
 
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
     NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
-    for( int i = 0; i < [icons count]; i++ )
-    {
-        NSString * str = [icons objectAtIndex:i];
+
+	for (int i = 0; i < [icons count]; i++ ) {
+        NSString *str = [icons objectAtIndex:i];
         [excludedIcons addObject:[iconMapping objectForKey:str]];
     }
+
     return excludedIcons;
-    
 }
 @end
