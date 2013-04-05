@@ -708,8 +708,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         customActivities = [args objectAtIndex:1];
         arguments = [args objectAtIndex:0];
     } else {
-        arguments = args;
+        arguments = [args objectAtIndex:0];
     }
+	
+	NSLog(@"%@", arguments);
 
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
