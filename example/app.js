@@ -306,7 +306,13 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	});
 	
 	Social.addEventListener("complete", function(e){
-		Ti.API.info("complete: "+e.success);	
+		Ti.API.info("complete: " + e.success);
+
+		if (e.platform == "activityView" || e.platform == "activityPopover") {
+			if (e.activity == Social.ACTIVITY_TWITTER) {
+				Ti.API.info("User is shared on Twitter");
+			}
+		}
 	});
 	
 	Social.addEventListener("error", function(e){
