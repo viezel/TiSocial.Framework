@@ -710,8 +710,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     } else {
         arguments = [args objectAtIndex:0];
     }
-	
-	NSLog(@"%@", arguments);
 
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
