@@ -32,6 +32,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
 MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
 MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTATCT, UIActivityTypeAssignToContact);
 MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
+MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 #pragma mark Internal
 
@@ -725,12 +726,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
         for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
-            NSDictionary *activityStyling = @{
-				@"type": [TiUtils stringValue:@"type" properties:activityDictionary def:@""],
-				@"title": [TiUtils stringValue:@"title" properties:activityDictionary def:@""],
-				@"image": [self findImage:activityImage],
-				@"module": self
-			};
+            NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
+				[TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
+				[TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
+				[self findImage:activityImage], @"image",
+				self, @"module",
+			nil];
 
             NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
             [activities addObject:nappActivity];
@@ -756,10 +757,20 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 			};
 			[self fireEvent:@"cancelled" withObject:event];
 		} else {
+			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// to returns ACTIVITY_CUSTOM constant
+			NSInteger activity;
+			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+				activity = 100;
+			} else {
+				activity = act;
+			}
+
 			NSDictionary *event = @{
 				@"success": @YES,
 				@"platform": @"activityView",
-				@"activity": NUMINT(act)
+				@"activity": NUMINT(activity),
+				@"activityName": act
 			};
 			[self fireEvent:@"complete" withObject:event];
 		}
@@ -816,10 +827,20 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 			};
 			[self fireEvent:@"cancelled" withObject:event];
 		} else {
+			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// to returns ACTIVITY_CUSTOM constant
+			NSInteger activity;
+			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+				activity = 100;
+			} else {
+				activity = act;
+			}
+			
 			NSDictionary *event = @{
 				@"success": @YES,
-				@"platform": @"activityPopover",
-				@"activity": NUMINT(act)
+				@"platform": @"activityView",
+				@"activity": NUMINT(activity),
+				@"activityName": act
 			};
 			[self fireEvent:@"complete" withObject:event];
 		}

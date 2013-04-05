@@ -23,5 +23,6 @@
 @property(nonatomic,readonly) NSNumber *ACTIVITY_COPY;
 @property(nonatomic,readonly) NSNumber *ACTIVITY_ASSIGN_CONTATCT;
 @property(nonatomic,readonly) NSNumber *ACTIVITY_SAVE_CAMERA;
+@property(nonatomic,readonly) NSNumber *ACTIVITY_CUSTOM;
 
 @end
