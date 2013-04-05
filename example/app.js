@@ -309,8 +309,14 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		Ti.API.info("complete: " + e.success);
 
 		if (e.platform == "activityView" || e.platform == "activityPopover") {
-			if (e.activity == Social.ACTIVITY_TWITTER) {
-				Ti.API.info("User is shared on Twitter");
+			switch (e.activity) {
+				case Social.ACTIVITY_TWITTER:
+					Ti.API.info("User is shared on Twitter");
+					break;
+
+				case Social.ACTIVITY_CUSTOM:
+					Ti.API.info("This is a customActivity: " + e.activityName);
+					break;
 			}
 		}
 	});
