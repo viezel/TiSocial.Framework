@@ -697,8 +697,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 ///////////////////////////////////////////////////////////////////
 
 
-
--(void)activityView:(id)args{
+-(void)activityView:(id)args {
     ENSURE_UI_THREAD(activityView, args);
     
     NSDictionary *arguments = nil;
@@ -710,44 +709,45 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
     } else {
         arguments = args;
     }
-    
+
     // Get Properties from JavaScript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
-    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     UIImage *image = [self findImage:shareImage];
     NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
+	// Custom Activities
     NSMutableArray * activities = [[NSMutableArray alloc] init];
-    if(customActivities != nil){
-        //custom activity
-        for( int i = 0; i < [customActivities count]; i++ ) {
+    if (customActivities != nil){
+        for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
-            NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             [TiUtils stringValue:@"type" properties:activityDictionary def:@""],@"type",
-                                             [TiUtils stringValue:@"title" properties:activityDictionary def:@""],@"title",
-                                             [self findImage:activityImage],@"image",
-                                             self, @"module",
-                                             nil];
+            NSDictionary *activityStyling = @{
+				@"type": [TiUtils stringValue:@"type" properties:activityDictionary def:@""],
+				@"title": [TiUtils stringValue:@"title" properties:activityDictionary def:@""],
+				@"image": [self findImage:activityImage],
+				@"module": self
+			};
 
-            NappCustomActivity * nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
+            NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
             [activities addObject:nappActivity];
             
         }
+
         avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
-        
     } 
     
     
     // Custom Icons
-    if(removeIcons != nil){
+    if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
+	// Completion Block Handler
     [avc setCompletionHandler:^(NSString *act, BOOL done) {
 		if (!done) {
 			NSDictionary *event = @{
@@ -765,13 +765,14 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 		}
 	}];
     
+	// Show ActivityViewController
     [[TiApp app] showModalController:avc animated:YES];
 }
 
 
 -(void)activityPopover:(id)args
 {
-    if(![TiUtils isIPad]){
+    if (![TiUtils isIPad]) {
         NSLog(@"[ERROR] activityPopover is an iPad Only feature");
         return;
     }
@@ -784,25 +785,25 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
         return;
     }
     
-    //get the properties from javascript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-    NSString * removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
-    NSArray * passthroughViews = [args objectForKey:@"passthroughViews"];
+    // Get Properties from JavaScript
+    NSString *shareText = [TiUtils stringValue:@"text" properties:args def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
+    NSArray *passthroughViews = [args objectForKey:@"passthroughViews"];
     UIBarButtonItem * senderButton = [args objectForKey:@"view"];
     
-    if(senderButton == nil){
+    if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
         return;
     }
+
     UIImage *image = [self findImage:shareImage];
-    
     NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
-    
+
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
     // Custom Icons
-    if(removeIcons != nil){
+    if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
     }
@@ -826,9 +827,11 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
     
     // popOver
     popoverController = [[UIPopoverController alloc] initWithContentViewController:avc];
-    if(passthroughViews != nil){
+
+	if (passthroughViews != nil) {
         [self setPassthroughViews:passthroughViews];
     }
+
     [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
@@ -847,25 +850,25 @@ MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
 -(NSMutableArray *)activityIcons:(NSString *)removeIcons
 {
     NSDictionary *iconMapping = @{
-                                  @"twitter": UIActivityTypePostToTwitter,
-                                  @"facebook": UIActivityTypePostToFacebook,
-                                  @"mail": UIActivityTypeMail,
-                                  @"sms": UIActivityTypeMessage,
-                                  @"copy": UIActivityTypeCopyToPasteboard,
-                                  @"contact": UIActivityTypeAssignToContact,
-                                  @"weibo": UIActivityTypePostToWeibo,
-                                  @"print": UIActivityTypePrint,
-                                  @"camera": UIActivityTypeSaveToCameraRoll           
-                                  };
+		@"twitter": UIActivityTypePostToTwitter,
+		@"facebook": UIActivityTypePostToFacebook,
+		@"mail": UIActivityTypeMail,
+		@"sms": UIActivityTypeMessage,
+		@"copy": UIActivityTypeCopyToPasteboard,
+		@"contact": UIActivityTypeAssignToContact,
+		@"weibo": UIActivityTypePostToWeibo,
+		@"print": UIActivityTypePrint,
+		@"camera": UIActivityTypeSaveToCameraRoll
+	};
 
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
     NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
-    for( int i = 0; i < [icons count]; i++ )
-    {
-        NSString * str = [icons objectAtIndex:i];
+
+	for (int i = 0; i < [icons count]; i++ ) {
+        NSString *str = [icons objectAtIndex:i];
         [excludedIcons addObject:[iconMapping objectForKey:str]];
     }
+
     return excludedIcons;
-    
 }
 @end
