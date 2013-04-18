@@ -223,7 +223,7 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
-**v1.7**
+**v1.6.2**  
 
 * Added support to verify what activity was choiced by user in *complete* event
 * Create constants to each default activity
