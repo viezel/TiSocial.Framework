@@ -813,6 +813,27 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
+    // Custom Activities
+    NSMutableArray * activities = [[NSMutableArray alloc] init];
+    if (customActivities != nil){
+        for (int i = 0; i < [customActivities count]; i++) {
+            NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
+            NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
+            NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
+                [TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
+                [TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
+                [self findImage:activityImage], @"image",
+                self, @"module",
+            nil];
+
+            NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
+            [activities addObject:nappActivity];
+            
+        }
+
+        avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+    }
+    
     // Custom Icons
     if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
