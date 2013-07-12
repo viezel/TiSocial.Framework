@@ -799,17 +799,16 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     ENSURE_UI_THREAD(activityPopover, args);
-//    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
     NSDictionary *arguments = nil;
     NSArray *customActivities = nil;
-    
     if([args count] > 1){
         customActivities = [args objectAtIndex:1];
         arguments = [args objectAtIndex:0];
     } else {
         arguments = [args objectAtIndex:0];
     }
-
+    
     
     if(popoverController.popoverVisible){
         [popoverController dismissPopoverAnimated:YES];
@@ -868,7 +867,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 			};
 			[self fireEvent:@"cancelled" withObject:event];
 		} else {
-			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// Here we must verify if is a CustomActivity or not
 			// to returns ACTIVITY_CUSTOM constant
 			NSInteger activity;
 			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
