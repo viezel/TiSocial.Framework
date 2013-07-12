@@ -789,7 +789,16 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     ENSURE_UI_THREAD(activityPopover, args);
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    NSDictionary *arguments = nil;
+    NSArray *customActivities = nil;
+    if([args count] > 1){
+        customActivities = [args objectAtIndex:1];
+        arguments = [args objectAtIndex:0];
+    } else {
+        arguments = [args objectAtIndex:0];
+    }
+    
     
     if(popoverController.popoverVisible){
         [popoverController dismissPopoverAnimated:YES];
@@ -797,11 +806,11 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     // Get Properties from JavaScript
-    NSString *shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
-    NSArray *passthroughViews = [args objectForKey:@"passthroughViews"];
-    UIBarButtonItem * senderButton = [args objectForKey:@"view"];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+    NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
+    UIBarButtonItem * senderButton = [arguments objectForKey:@"view"];
     
     if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
@@ -848,7 +857,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 			};
 			[self fireEvent:@"cancelled" withObject:event];
 		} else {
-			// RKS NOTE: Here we must verify if is a CustomActivity or not
+			// Here we must verify if is a CustomActivity or not
 			// to returns ACTIVITY_CUSTOM constant
 			NSInteger activity;
 			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
