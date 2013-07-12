@@ -1,7 +1,4 @@
 .DS_Store
 build
 *.xcuserdatad
-<<<<<<< HEAD
 *.tmproj
-=======
->>>>>>> viezel/master
