@@ -237,14 +237,24 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
- 
+    
+    NSString *platform = nil;
+
+    
+    if (service == SLServiceTypeFacebook) {
+        platform = @"facebook";
+    }
+    if (service == SLServiceTypeTwitter) {
+        platform = @"twitter";
+    }
+    
     SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
     SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
         if (result == SLComposeViewControllerResultCancelled) {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",platform, @"platform",nil];
             [self fireEvent:@"cancelled" withObject:event];
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",platform, @"platform",nil];
             [self fireEvent:@"complete" withObject:event];
         }
         [controller dismissViewControllerAnimated:YES completion:Nil];

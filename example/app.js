@@ -307,6 +307,7 @@ if (Titanium.Platform.name == 'iPhone OS'){
 	
 	Social.addEventListener("complete", function(e){
 		Ti.API.info("complete: " + e.success);
+		console.log(e);
 
 		if (e.platform == "activityView" || e.platform == "activityPopover") {
 			switch (e.activity) {
