@@ -237,14 +237,24 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 -(void)shareToNetwork:(NSString *)service args:(id)args {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
- 
+    
+    NSString *platform = nil;
+
+    
+    if (service == SLServiceTypeFacebook) {
+        platform = @"facebook";
+    }
+    if (service == SLServiceTypeTwitter) {
+        platform = @"twitter";
+    }
+    
     SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:service];
     SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
         if (result == SLComposeViewControllerResultCancelled) {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",platform, @"platform",nil];
             [self fireEvent:@"cancelled" withObject:event];
         } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",nil];
+            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",platform, @"platform",nil];
             [self fireEvent:@"complete" withObject:event];
         }
         [controller dismissViewControllerAnimated:YES completion:Nil];
@@ -789,7 +799,17 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     ENSURE_UI_THREAD(activityPopover, args);
-    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+//    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    NSDictionary *arguments = nil;
+    NSArray *customActivities = nil;
+    
+    if([args count] > 1){
+        customActivities = [args objectAtIndex:1];
+        arguments = [args objectAtIndex:0];
+    } else {
+        arguments = [args objectAtIndex:0];
+    }
+
     
     if(popoverController.popoverVisible){
         [popoverController dismissPopoverAnimated:YES];
@@ -797,11 +817,11 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     // Get Properties from JavaScript
-    NSString *shareText = [TiUtils stringValue:@"text" properties:args def:@""];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
-    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:args def:nil];
-    NSArray *passthroughViews = [args objectForKey:@"passthroughViews"];
-    UIBarButtonItem * senderButton = [args objectForKey:@"view"];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+    NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
+    UIBarButtonItem * senderButton = [arguments objectForKey:@"view"];
     
     if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
