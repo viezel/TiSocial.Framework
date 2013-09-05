@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSString *type;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) TiModule *module;
+@property (strong, nonatomic) KrollCallback *callback;
 
 @end
 
@@ -51,6 +52,10 @@
 - (UIViewController *)activityViewController {
     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: self.title,@"title", self.type,@"type", nil];
     [self.module fireEvent:@"customActivity" withObject:event];
+    if (self.callback) {
+        NSArray* array = [NSArray arrayWithObjects: event, nil];
+        [self.callback call:array thisObject:nil];
+    }
     [self activityDidFinish:YES];
     return nil;
 }
@@ -69,6 +74,7 @@
         self.title = [dict objectForKey:@"title"];
         self.image = [dict objectForKey:@"image"];
         self.module = [dict objectForKey:@"module"];
+        self.callback = [dict objectForKey:@"callback"];
     }
     return(self);
 }

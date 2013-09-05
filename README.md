@@ -192,7 +192,10 @@ Social.activityView({
 	{
 		title:"Custom Share",
 		type:"hello.world",
-		image:"pin.png"
+		image:"pin.png",
+		callback: function(e) {
+			alert("You chose me!");
+		}
 	},
 	{
 		title:"Open in Safari",
