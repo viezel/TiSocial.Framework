@@ -741,6 +741,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 				[TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
 				[self findImage:activityImage], @"image",
 				self, @"module",
+				[activityDictionary objectForKey:@"callback"], @"callback",
 			nil];
 
             NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
