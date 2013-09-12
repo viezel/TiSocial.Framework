@@ -170,8 +170,8 @@ Each of these options is optional
 
 ### Events
 
-* **complete**: Fired when user complete using a Activity. Here, you can verify witch activity user have choiced by *activity* event property. When dealing with customActivities, you can get the *activityName* property.
-* **cancelled**: Fired when user not completed request.
+* **complete**: Fired when the user completes using an Activity. Here, you can verify which activity the user has selected by checking the *activity* event property. When dealing with customActivities, you can get the *activityName* property.
+* **cancelled**: Fired when user did not complete the request.
 
 ### Social.activityView()
 `options` can have the following keys:
