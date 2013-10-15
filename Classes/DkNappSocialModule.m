@@ -30,8 +30,9 @@ MAKE_SYSTEM_PROP(ACTIVITY_MESSAGE, UIActivityTypeMessage);
 MAKE_SYSTEM_PROP(ACTIVITY_MAIL, UIActivityTypeMail);
 MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
 MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
-MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTATCT, UIActivityTypeAssignToContact);
+MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTACT, UIActivityTypeAssignToContact);
 MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
+MAKE_SYSTEM_PROP(ACTIVITY_AIRDROP, UIActivityTypeAirDrop);
 MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 #pragma mark Internal
@@ -921,6 +922,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 		@"weibo": UIActivityTypePostToWeibo,
 		@"print": UIActivityTypePrint,
 		@"camera": UIActivityTypeSaveToCameraRoll
+		@"airdrop": UIActivityTypeAirDrop
 	};
 
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
