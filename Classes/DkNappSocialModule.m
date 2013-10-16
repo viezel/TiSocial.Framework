@@ -32,8 +32,17 @@ MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
 MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
 MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTACT, UIActivityTypeAssignToContact);
 MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
+
+// iOS7+
+MAKE_SYSTEM_PROP(ACTIVITY_READING_LIST, UIActivityTypeAddToReadingList);
+MAKE_SYSTEM_PROP(ACTIVITY_FLICKR, UIActivityTypePostToFlickr);
+MAKE_SYSTEM_PROP(ACTIVITY_VIMEO, UIActivityTypePostToVimeo);
 MAKE_SYSTEM_PROP(ACTIVITY_AIRDROP, UIActivityTypeAirDrop);
+MAKE_SYSTEM_PROP(ACTIVITY_TENCENT_WEIBO, UIActivityTypePostToTencentWeibo);
+
+// Custom
 MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
+
 
 #pragma mark Internal
 
@@ -921,8 +930,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 		@"contact": UIActivityTypeAssignToContact,
 		@"weibo": UIActivityTypePostToWeibo,
 		@"print": UIActivityTypePrint,
-		@"camera": UIActivityTypeSaveToCameraRoll
-		@"airdrop": UIActivityTypeAirDrop
+		@"camera": UIActivityTypeSaveToCameraRoll,
+        @"readinglist": UIActivityTypeAddToReadingList,
+        @"flickr": UIActivityTypePostToFlickr,
+        @"vimeo": UIActivityTypePostToVimeo,
+        @"airdrop": UIActivityTypeAirDrop,
+		@"tencentweibo": UIActivityTypePostToTencentWeibo
 	};
 
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];

@@ -260,12 +260,18 @@ if (Titanium.Platform.name == 'iPhone OS'){
             	{
             		title:"Custom Share",
             		type:"hello.world",
-            		image:"pin.png"
+            		image:"pin.png",
+            		callback: function(e) {
+						alert("You chose me!");
+					}
             	},
             	{
             		title:"Open in Safari",
             		type:"open.safari",
-            		image:"safari.png"
+            		image:"safari.png",
+            		callback: function(e) {
+            			Ti.Platform.openURL("http://www.napp.dk");
+            		}
             	}
             ]);
         } else {
@@ -337,27 +343,6 @@ if (Titanium.Platform.name == 'iPhone OS'){
 		Ti.API.info("customActivity");	
 		Ti.API.info(e);	
 		
-		//MAKE YOUR OWN CUSTOM ACTIVITY !
-		setTimeout(function(){
-			if(e.title == "Open in Safari"){
-				Ti.Platform.openURL("http://www.google.com");
-			} else {
-				//implement some logic here..
-				var close = Ti.UI.createButton({
-					title:"close"
-				});
-				close.addEventListener("click", function(e){
-					win.close();
-				});
-				var win = Ti.UI.createWindow({
-					backgroundColor:"red",
-					leftNavButton:close,
-					title:"do something nice"
-				});
-				win.open({modal:true});
-			}
-			
-		},500);
 	});
 }
 

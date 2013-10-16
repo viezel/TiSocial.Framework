@@ -166,6 +166,11 @@ Each of these options is optional
 * **ACTIVITY_COPY**: UIActivityTypeCopyToPasteboard
 * **ACTIVITY_ASSIGN_CONTATCT**: UIActivityTypeAssignToContact
 * **ACTIVITY_SAVE_CAMERA**: UIActivityTypeSaveToCameraRoll
+* **ACTIVITY_READING_LIST**: UIActivityTypeAddToReadingList
+* **ACTIVITY_FLICKR**: UIActivityTypePostToFlickr
+* **ACTIVITY_VIMEO**: UIActivityTypePostToVimeo
+* **ACTIVITY_AIRDROP**: UIActivityTypeAirDrop
+* **ACTIVITY_TENCENT_WEIBO**: UIActivityTypePostToTencentWeibo
 * **ACTIVITY_CUSTOM**: Custom Activities
 
 ### Events
@@ -225,6 +230,11 @@ Please check the *Example* section in the file.
 
 
 ## Changelog
+
+**v1.7.1**  
+
+* Added new activities in iOS7: `ACTIVITY_READING_LIST`, `ACTIVITY_FLICKR`, `ACTIVITY_VIMEO`, `ACTIVITY_AIRDROP ` & `ACTIVITY_TENCENT_WEIBO`
+* Added callback on custom activities
 
 **v1.7.0**  
 
