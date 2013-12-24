@@ -50,10 +50,12 @@
 }
 
 - (UIViewController *)activityViewController {
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: self.title,@"title", self.type,@"type", nil];
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: self.title,@"title", self.type,@"type", self.type,@"activityName",nil];
+
     [self.module fireEvent:@"customActivity" withObject:event];
     if (self.callback) {
         NSArray* array = [NSArray arrayWithObjects: event, nil];
+        
         [self.callback call:array thisObject:nil];
     }
     [self activityDidFinish:YES];
