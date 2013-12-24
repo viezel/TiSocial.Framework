@@ -921,22 +921,38 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 -(NSMutableArray *)activityIcons:(NSString *)removeIcons
 {
-    NSDictionary *iconMapping = @{
-		@"twitter": UIActivityTypePostToTwitter,
-		@"facebook": UIActivityTypePostToFacebook,
-		@"mail": UIActivityTypeMail,
-		@"sms": UIActivityTypeMessage,
-		@"copy": UIActivityTypeCopyToPasteboard,
-		@"contact": UIActivityTypeAssignToContact,
-		@"weibo": UIActivityTypePostToWeibo,
-		@"print": UIActivityTypePrint,
-		@"camera": UIActivityTypeSaveToCameraRoll,
-        @"readinglist": UIActivityTypeAddToReadingList,
-        @"flickr": UIActivityTypePostToFlickr,
-        @"vimeo": UIActivityTypePostToVimeo,
-        @"airdrop": UIActivityTypeAirDrop,
-		@"tencentweibo": UIActivityTypePostToTencentWeibo
-	};
+    NSMutableDictionary *iconMapping = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+        UIActivityTypePostToTwitter, @"twitter",
+        UIActivityTypePostToFacebook, @"facebook",
+        UIActivityTypeMail, @"mail",
+        UIActivityTypeMessage, @"sms",
+        UIActivityTypeCopyToPasteboard, @"copy",
+        UIActivityTypeAssignToContact, @"contact",
+        UIActivityTypePostToWeibo, @"weibo",
+        UIActivityTypePrint, @"print",
+        UIActivityTypeSaveToCameraRoll, @"camera",
+        nil
+    ];
+    
+    if (&UIActivityTypeAddToReadingList) {
+        [iconMapping setValue:UIActivityTypeAddToReadingList forKey:@"readinglist"];
+    }
+    
+    if (&UIActivityTypePostToFlickr) {
+        [iconMapping setValue:UIActivityTypePostToFlickr forKey:@"flickr"];
+    }
+    
+    if (&UIActivityTypePostToVimeo) {
+        [iconMapping setValue:UIActivityTypePostToVimeo forKey:@"vimeo"];
+    }
+    
+    if (&UIActivityTypeAirDrop) {
+        [iconMapping setValue:UIActivityTypeAirDrop forKey:@"airdrop"];
+    }
+    
+    if (&UIActivityTypePostToTencentWeibo) {
+        [iconMapping setValue:UIActivityTypePostToTencentWeibo forKey:@"tencentweibo"];
+    }
 
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
     NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
