@@ -234,6 +234,7 @@ Please check the *Example* section in the file.
 **v1.7.2**  
 
 * Added url property for activityView to support Reading List
+* fixed image sharing
 
 **v1.7.1**  
 
