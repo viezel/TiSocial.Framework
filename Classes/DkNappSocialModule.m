@@ -732,13 +732,24 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
 
     // Get Properties from JavaScript
-    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     
     UIImage *image = [self findImage:shareImage];
-    NSArray *activityItems = [NSArray arrayWithObjects:shareText,shareURL,image, nil];
+    
+    NSMutableArray *activityItems = [[NSMutableArray alloc] init];
+    
+    if(shareText){
+        [activityItems addObject:shareText];
+    }
+    if(shareURL){
+        [activityItems addObject:shareURL];
+    }
+    if(image){
+        [activityItems addObject:image];
+    }
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
