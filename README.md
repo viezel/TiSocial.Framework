@@ -51,10 +51,10 @@ Each of these options is optional
 `requestParameter` is optional, but is build like this:
 
 	{
-		'screen_name': 'C_BHole'
+		'screen_name': 'CBeloch'
 	}
 
-So *screen_name* is the parameter name / key and *C_BHole* is the value of the parameter
+So *screen_name* is the parameter name / key and *CBeloch* is the value of the parameter
 
 ### Social.twitterAccountList()
 Returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
@@ -231,6 +231,11 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.7.2**  
+
+* Added url property for activityView to support Reading List
+* fixed image sharing
+
 **v1.7.1**  
 
 * Added new activities in iOS7: `ACTIVITY_READING_LIST`, `ACTIVITY_FLICKR`, `ACTIVITY_VIMEO`, `ACTIVITY_AIRDROP ` & `ACTIVITY_TENCENT_WEIBO`
@@ -317,7 +322,7 @@ twitter: @nappdev
 ## Contributors
 
 **Christopher Beloch**  
-twitter: @C_BHole
+twitter: @CBeloch
 
 **Jongeun Lee**  
 twitter: @yomybaby
