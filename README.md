@@ -231,6 +231,10 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.7.3**  
+
+* Bugfix for unsupported iOS6 sharing types
+
 **v1.7.2**  
 
 * Added url property for activityView to support Reading List
