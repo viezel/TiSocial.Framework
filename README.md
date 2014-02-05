@@ -179,13 +179,14 @@ Each of these options is optional
 * **cancelled**: Fired when user did not complete the request.
 
 ### Social.activityView()
-`options` can have the following keys:
+The first required `options` argument can have the following keys:
 
 * *text* - the status message
+* *url* - a url you want to share
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 
-The second argument is an array with objects. This argument is optional. Use this to create custom UIActivities. 
+The second optional argument is an array with objects. Use this to create custom UIActivities. 
 The posibilties are almost endless. have a look at: *http://uiactivities.com* for inspiration.
 
 ```javascript
@@ -211,13 +212,16 @@ Social.activityView({
 ```
 
 ### Social.activityPopover() (iPad only)
-`options` can have the following keys:
+The first required `options` argument can have the following keys:
 
 * *text* - the status message
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 * *view* - the source button
 
+The second optional argument is an array with objects. Use this to create custom UIActivities.
+
+See `Social.activityView()`.
 
 ## Example of usage
 
