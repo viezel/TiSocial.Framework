@@ -291,7 +291,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     [[TiApp app] showModalController:controller animated:animated];
-
+     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
+	[self fireEvent:@"dialogOpen" withObject:nil];
 }
 
 /*
