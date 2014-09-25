@@ -210,7 +210,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 /*
  * Accounts
  */
--(id)twitterAccountList:(id)args
+-(void)twitterAccountList:(id)args
 {
     if(accountStore == nil){
         accountStore =  [[ACAccountStore alloc] init];
