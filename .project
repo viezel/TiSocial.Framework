@@ -18,6 +18,5 @@
 	</buildSpec>
 	<natures>
 		<nature>com.appcelerator.titanium.mobile.module.nature</nature>
-		<nature>com.aptana.projects.webnature</nature>
 	</natures>
 </projectDescription>

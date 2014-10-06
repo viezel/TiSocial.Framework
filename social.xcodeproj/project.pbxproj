@@ -167,6 +167,8 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "social" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -257,6 +259,7 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
@@ -269,7 +272,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				TITANIUM_SDK_VERSION = 3.1.1.GA;
+				TITANIUM_SDK_VERSION = "$(inherited)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
@@ -304,6 +307,7 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = "";
@@ -312,7 +316,7 @@
 				PRODUCT_NAME = DkNappSocial;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				TITANIUM_SDK_VERSION = 3.1.1.GA;
+				TITANIUM_SDK_VERSION = "$(inherited)";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;

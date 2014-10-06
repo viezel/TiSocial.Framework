@@ -1,8 +1,4 @@
 
-// iOS6
-OTHER_LDFLAGS[sdk=iphoneos6*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
-OTHER_LDFLAGS[sdk=iphonesimulator6*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
-
-// iOS7
-OTHER_LDFLAGS[sdk=iphoneos7*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
-OTHER_LDFLAGS[sdk=iphonesimulator7*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter
+// 
+OTHER_LDFLAGS[sdk=iphoneos*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter -weak_framework iAd
+OTHER_LDFLAGS[sdk=iphonesimulator*]=$(inherited) -weak_framework Social -weak_framework Accounts -weak_framework Twitter -weak_framework iAd
