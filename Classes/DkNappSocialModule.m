@@ -16,9 +16,6 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
-//for iOS5 twitter framework
-#import <Twitter/Twitter.h>
-
 @implementation DkNappSocialModule
 
 # pragma mark Activties
@@ -65,7 +62,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	// this method is called when the module is first loaded
 	// you *must* call the superclass
 	[super startup];
-	
+
+	popoverController = nil;
+	accountStore = nil;
+
 	NSLog(@"[INFO] %@ loaded",self);
 }
 
@@ -83,9 +83,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 -(void)dealloc
 {
-	// release any resources that have been retained by the module
-    RELEASE_TO_NIL(popoverController);
-    RELEASE_TO_NIL(accountStore);
+	// release any resources that have been retained by the module (project uses ARC now)
 	[super dealloc];
 }
 
@@ -291,7 +289,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     [[TiApp app] showModalController:controller animated:animated];
-     NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
+
+	NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
 	[self fireEvent:@"dialogOpen" withObject:nil];
 }
 
@@ -564,44 +563,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     if(NSClassFromString(@"SLComposeViewController") != nil){
         [self shareToNetwork:SLServiceTypeTwitter args:args];
-    }else{
-        // iOS5 Support
-        ENSURE_SINGLE_ARG(args, NSDictionary);
-        
-        if ([TWTweetComposeViewController canSendTweet])
-        {
-            TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
-            
-            NSString *url = [args objectForKey:@"url"];
-            NSString *message = [args objectForKey:@"text"];
-            
-            if (message != nil) {
-                [tweetSheet setInitialText: message];
-            }
-            
-            if (url != nil) {
-                [tweetSheet addURL:[TiUtils toURL:url proxy:nil]];
-            }
-            
-            tweetSheet.completionHandler = ^(TWTweetComposeViewControllerResult result) {
-	
-			    if (result == TWTweetComposeViewControllerResultCancelled) {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"twitter",@"platform",nil];
-			        [self fireEvent:@"cancelled" withObject:event];
-			    } else {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",@"twitter",@"platform",nil];
-			        [self fireEvent:@"complete" withObject:event];
-			    }
-	
-                [[TiApp app] hideModalController:tweetSheet animated:YES];
-                [tweetSheet release];
-            };
-            
-            [[TiApp app] showModalController:tweetSheet animated:YES];
-        } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"cannot send tweet",@"status", @"twitter",@"platform", nil];
-            [self fireEvent:@"error" withObject:event];
-        }
     }
 }
 
@@ -867,8 +828,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
                 [TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
                 [TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
                 [self findImage:activityImage], @"image",
-		[activityDictionary objectForKey:@"callback"], @"callback",
-		self, @"module",
+				[activityDictionary objectForKey:@"callback"], @"callback",
+                self, @"module",
             nil];
 
             NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
