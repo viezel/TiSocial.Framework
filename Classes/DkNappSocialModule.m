@@ -272,7 +272,27 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     //get the properties from javascript
     NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
     NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    
+    //added M Hudson 22/10/14 to allow for blob support
+    //see if we passed in a string reference to the file or a TiBlob object
+    
+    id TiImageObject = [args objectForKey:@"image"];
+    
+    if([TiImageObject isKindOfClass:[TiBlob class]]){
+        NSLog(@"[INFO] Found an image", nil);
+        UIImage* blobImage = [(TiBlob*)TiImageObject image];
+        if (blobImage != nil) {
+            NSLog(@"[INFO] blob is not null", nil);
+            [controller addImage: blobImage];
+        }
+    } else {
+        NSLog(@"[INFO] Think it is a string", nil);
+        NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+        if (shareImage != nil) {
+            [controller addImage: [self findImage:shareImage]];
+        }
+        
+    }
     
     BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
     
@@ -282,10 +302,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     if (shareUrl != nil) {
         [controller addURL:[NSURL URLWithString:shareUrl]];
-    }
-    
-    if (shareImage != nil) {
-        [controller addImage: [self findImage:shareImage]];
     }
     
     [[TiApp app] showModalController:controller animated:animated];
@@ -696,12 +712,34 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     
-    UIImage *image = [self findImage:shareImage];
-    
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
+    
+    //added M Hudson 22/10/14 to allow for blob support
+    
+    id TiImageObject = [arguments objectForKey:@"image"];
+    if(TiImageObject != nil){
+        //see if we passed in a string reference to the file or a TiBlob object
+        if([TiImageObject isKindOfClass:[TiBlob class]]){
+        
+            UIImage *image = [(TiBlob*)TiImageObject image];
+            if(image){
+                [activityItems addObject:image];
+            }
+            
+        } else {
+            
+            NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+            if (shareImage != nil) {
+                UIImage *image = [self findImage:shareImage];
+                if(image){
+                    [activityItems addObject:image];
+                }
+            }
+        }
+    }
     
     if(shareText){
         [activityItems addObject:shareText];
@@ -709,9 +747,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     if(shareURL){
         [activityItems addObject:shareURL];
     }
-    if(image){
-        [activityItems addObject:image];
-    }
+    
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
