@@ -15,5 +15,5 @@ name: social
 moduleid: dk.napp.social
 guid: 8152d7fc-6edb-4c40-8d6f-bc2cef87bc1a
 platform: iphone
-minsdk: 2.1.3.GA
+minsdk: 3.4.0.GA
 architectures: armv7 i386 x86_64 arm64

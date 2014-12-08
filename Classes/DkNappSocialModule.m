@@ -16,9 +16,6 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
-//for iOS5 twitter framework
-#import <Twitter/Twitter.h>
-
 @implementation DkNappSocialModule
 
 # pragma mark Activties
@@ -65,7 +62,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	// this method is called when the module is first loaded
 	// you *must* call the superclass
 	[super startup];
-	
+
+	popoverController = nil;
+	accountStore = nil;
+
 	NSLog(@"[INFO] %@ loaded",self);
 }
 
@@ -83,9 +83,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 -(void)dealloc
 {
-	// release any resources that have been retained by the module
-    RELEASE_TO_NIL(popoverController);
-    RELEASE_TO_NIL(accountStore);
+	// release any resources that have been retained by the module (project uses ARC now)
 	[super dealloc];
 }
 
@@ -210,7 +208,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 /*
  * Accounts
  */
--(id)twitterAccountList:(id)args
+-(void)twitterAccountList:(id)args
 {
     if(accountStore == nil){
         accountStore =  [[ACAccountStore alloc] init];
@@ -274,7 +272,27 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     //get the properties from javascript
     NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
     NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
-    NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+    
+    //added M Hudson 22/10/14 to allow for blob support
+    //see if we passed in a string reference to the file or a TiBlob object
+    
+    id TiImageObject = [args objectForKey:@"image"];
+    
+    if([TiImageObject isKindOfClass:[TiBlob class]]){
+        NSLog(@"[INFO] Found an image", nil);
+        UIImage* blobImage = [(TiBlob*)TiImageObject image];
+        if (blobImage != nil) {
+            NSLog(@"[INFO] blob is not null", nil);
+            [controller addImage: blobImage];
+        }
+    } else {
+        NSLog(@"[INFO] Think it is a string", nil);
+        NSString * shareImage = [TiUtils stringValue:@"image" properties:args def:nil];
+        if (shareImage != nil) {
+            [controller addImage: [self findImage:shareImage]];
+        }
+        
+    }
     
     BOOL animated = [TiUtils boolValue:@"animated" properties:args def:YES];
     
@@ -286,12 +304,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         [controller addURL:[NSURL URLWithString:shareUrl]];
     }
     
-    if (shareImage != nil) {
-        [controller addImage: [self findImage:shareImage]];
-    }
-    
     [[TiApp app] showModalController:controller animated:animated];
 
+	NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
+	[self fireEvent:@"dialogOpen" withObject:nil];
 }
 
 /*
@@ -563,44 +579,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     if(NSClassFromString(@"SLComposeViewController") != nil){
         [self shareToNetwork:SLServiceTypeTwitter args:args];
-    }else{
-        // iOS5 Support
-        ENSURE_SINGLE_ARG(args, NSDictionary);
-        
-        if ([TWTweetComposeViewController canSendTweet])
-        {
-            TWTweetComposeViewController *tweetSheet = [[TWTweetComposeViewController alloc] init];
-            
-            NSString *url = [args objectForKey:@"url"];
-            NSString *message = [args objectForKey:@"text"];
-            
-            if (message != nil) {
-                [tweetSheet setInitialText: message];
-            }
-            
-            if (url != nil) {
-                [tweetSheet addURL:[TiUtils toURL:url proxy:nil]];
-            }
-            
-            tweetSheet.completionHandler = ^(TWTweetComposeViewControllerResult result) {
-	
-			    if (result == TWTweetComposeViewControllerResultCancelled) {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"twitter",@"platform",nil];
-			        [self fireEvent:@"cancelled" withObject:event];
-			    } else {
-			        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES),@"success",@"twitter",@"platform",nil];
-			        [self fireEvent:@"complete" withObject:event];
-			    }
-	
-                [[TiApp app] hideModalController:tweetSheet animated:YES];
-                [tweetSheet release];
-            };
-            
-            [[TiApp app] showModalController:tweetSheet animated:YES];
-        } else {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"cannot send tweet",@"status", @"twitter",@"platform", nil];
-            [self fireEvent:@"error" withObject:event];
-        }
     }
 }
 
@@ -734,12 +712,34 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     
-    UIImage *image = [self findImage:shareImage];
-    
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
+    
+    //added M Hudson 22/10/14 to allow for blob support
+    
+    id TiImageObject = [arguments objectForKey:@"image"];
+    if(TiImageObject != nil){
+        //see if we passed in a string reference to the file or a TiBlob object
+        if([TiImageObject isKindOfClass:[TiBlob class]]){
+        
+            UIImage *image = [(TiBlob*)TiImageObject image];
+            if(image){
+                [activityItems addObject:image];
+            }
+            
+        } else {
+            
+            NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+            if (shareImage != nil) {
+                UIImage *image = [self findImage:shareImage];
+                if(image){
+                    [activityItems addObject:image];
+                }
+            }
+        }
+    }
     
     if(shareText){
         [activityItems addObject:shareText];
@@ -747,9 +747,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     if(shareURL){
         [activityItems addObject:shareURL];
     }
-    if(image){
-        [activityItems addObject:image];
-    }
+    
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
@@ -866,6 +864,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
                 [TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
                 [TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
                 [self findImage:activityImage], @"image",
+				[activityDictionary objectForKey:@"callback"], @"callback",
                 self, @"module",
             nil];
 

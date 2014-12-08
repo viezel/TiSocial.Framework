@@ -235,6 +235,14 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+**v1.7.5**  
+
+* Built with SDK 3.4.0, works on iOS 8. Changed project to use ARC, removed iOS 5 support (some deprecated stuff)
+
+**v1.7.4**  
+
+* Remove iOS8- specific build flags
+
 **v1.7.3**  
 
 * Bugfix for unsupported iOS6 sharing types
