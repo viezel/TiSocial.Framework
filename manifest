@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.7.5
+version: 1.7.6
 apiversion: 2
 description: Social.Framework Module
 author: Mads Møller
@@ -16,3 +16,4 @@ moduleid: dk.napp.social
 guid: 8152d7fc-6edb-4c40-8d6f-bc2cef87bc1a
 platform: iphone
 minsdk: 3.4.0.GA
+architectures: armv7 i386 x86_64 arm64
