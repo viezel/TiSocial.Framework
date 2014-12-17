@@ -50,9 +50,9 @@ Each of these options is optional
 
 `requestParameter` is optional, but is build like this:
 
-	{
-		'screen_name': 'CBeloch'
-	}
+    {
+        'screen_name': 'CBeloch'
+    }
 
 So *screen_name* is the parameter name / key and *CBeloch* is the value of the parameter
 
@@ -61,9 +61,9 @@ Returns a list of twiiter accounts. use the EventListener `accountList` to captu
 
 ```javascript
 Social.addEventListener("accountList", function(e){
-	Ti.API.info("Accounts:");
-	accounts = e.accounts; //accounts
-	Ti.API.info(accounts);
+    Ti.API.info("Accounts:");
+    accounts = e.accounts; //accounts
+    Ti.API.info(accounts);
 });
 Social.twitterAccountList();
 ```
@@ -94,9 +94,9 @@ Each of these options is optional
 
 `requestParameter` is optional, but is build like this:
 
-	{
-		fields: 'id,name,devices'
-	}
+    {
+        fields: 'id,name,devices'
+    }
 
 So *fields* is the parameter name / key and *id,name,devices* is the value of the parameter
 
@@ -110,7 +110,7 @@ Social.grantFacebookPermissions({
     permissionsKey: "email" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
 });
 Social.addEventListener("facebookAccount", function(e){ 
-	fbAccount = e.account; //now you have stored the FB account. You can then request facebook using the below method 
+    fbAccount = e.account; //now you have stored the FB account. You can then request facebook using the below method 
 });
 ```
 
@@ -185,6 +185,7 @@ The first required `options` argument can have the following keys:
 * *url* - a url you want to share
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
+* *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
 
 The second optional argument is an array with objects. Use this to create custom UIActivities. 
 The posibilties are almost endless. have a look at: *http://uiactivities.com* for inspiration.
@@ -193,21 +194,22 @@ The posibilties are almost endless. have a look at: *http://uiactivities.com* fo
 Social.activityView({
     text:"share like a king!",
     image:"pin.png",
-    removeIcons:"print,sms,copy,contact,camera,mail"
+    removeIcons:"print,sms,copy,contact,camera,mail",
+    emailIsHTML : false
 },[
-	{
-		title:"Custom Share",
-		type:"hello.world",
-		image:"pin.png",
-		callback: function(e) {
-			alert("You chose me!");
-		}
-	},
-	{
-		title:"Open in Safari",
-		type:"open.safari",
-		image:"safari.png"
-	}
+    {
+        title:"Custom Share",
+        type:"hello.world",
+        image:"pin.png",
+        callback: function(e) {
+            alert("You chose me!");
+        }
+    },
+    {
+        title:"Open in Safari",
+        type:"open.safari",
+        image:"safari.png"
+    }
 ]);
 ```
 
@@ -218,6 +220,7 @@ The first required `options` argument can have the following keys:
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 * *view* - the source button
+* *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
 
 The second optional argument is an array with objects. Use this to create custom UIActivities.
 
@@ -234,6 +237,10 @@ Please check the *Example* section in the file.
 
 
 ## Changelog
+
+***v1.7.7***
+
+* Added support for email only html customization
 
 ***v1.7.6***
 
@@ -352,6 +359,9 @@ twitter: @dan_tamas
 
 **Rafael Kellermann Streit**  
 twitter: @rafaelks
+
+**Joseandro Luiz**  
+twitter: @joseandroluiz
 
 ## License
 
