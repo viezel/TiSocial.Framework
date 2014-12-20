@@ -32,6 +32,8 @@
 		B603B54D1700E18B002E4196 /* NappCustomActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = B603B54B1700E18B002E4196 /* NappCustomActivity.h */; };
 		B603B54E1700E18B002E4196 /* NappCustomActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = B603B54C1700E18B002E4196 /* NappCustomActivity.m */; };
 		B663690D17C29D03008AD704 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66EFA9016137E8100A5A9B4 /* Accounts.framework */; };
+		DE2F4E581A41FA5B002B4204 /* NappItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2F4E561A41FA5B002B4204 /* NappItemProvider.m */; };
+		DE2F4E591A41FA5B002B4204 /* NappItemProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DE2F4E571A41FA5B002B4204 /* NappItemProvider.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		B603B54C1700E18B002E4196 /* NappCustomActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NappCustomActivity.m; path = Classes/NappCustomActivity.m; sourceTree = "<group>"; };
 		B66EFA9016137E8100A5A9B4 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libDkNappSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDkNappSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE2F4E561A41FA5B002B4204 /* NappItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NappItemProvider.m; path = Classes/NappItemProvider.m; sourceTree = "<group>"; };
+		DE2F4E571A41FA5B002B4204 /* NappItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NappItemProvider.h; path = Classes/NappItemProvider.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,8 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				DE2F4E561A41FA5B002B4204 /* NappItemProvider.m */,
+				DE2F4E571A41FA5B002B4204 /* NappItemProvider.h */,
 				24DE9E0F11C5FE74003F90F6 /* DkNappSocialModuleAssets.h */,
 				24DE9E1011C5FE74003F90F6 /* DkNappSocialModuleAssets.m */,
 				24DD6CF71134B3F500162E58 /* DkNappSocialModule.h */,
@@ -133,6 +139,7 @@
 			files = (
 				AA747D9F0F9514B9006C5449 /* DkNappSocial_Prefix.pch in Headers */,
 				24DD6CF91134B3F500162E58 /* DkNappSocialModule.h in Headers */,
+				DE2F4E591A41FA5B002B4204 /* NappItemProvider.h in Headers */,
 				24DE9E1111C5FE74003F90F6 /* DkNappSocialModuleAssets.h in Headers */,
 				B603B54D1700E18B002E4196 /* NappCustomActivity.h in Headers */,
 			);
@@ -164,6 +171,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "social" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -209,6 +217,7 @@
 			files = (
 				24DD6CFA1134B3F500162E58 /* DkNappSocialModule.m in Sources */,
 				24DE9E1211C5FE74003F90F6 /* DkNappSocialModuleAssets.m in Sources */,
+				DE2F4E581A41FA5B002B4204 /* NappItemProvider.m in Sources */,
 				B603B54E1700E18B002E4196 /* NappCustomActivity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,7 +322,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 24DD6D1B1134B66800162E58 /* titanium.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -360,7 +368,6 @@
 			baseConfigurationReference = 24DD6D1B1134B66800162E58 /* titanium.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD)";
 				DSTROOT = /tmp/DkNappSocial.dst;

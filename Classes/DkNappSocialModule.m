@@ -11,6 +11,7 @@
 #import "TiUtils.h"
 #import "TiApp.h"
 #import "NappCustomActivity.h"
+#import "NappItemProvider.h"
 
 //include Social and Accounts Frameworks
 #import <Social/Social.h>
@@ -712,9 +713,9 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
-    
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
-    
+    BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
+
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
     //added M Hudson 22/10/14 to allow for blob support
@@ -742,8 +743,15 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     if(shareText){
-        [activityItems addObject:shareText];
+        if (emailIsHTML) {
+            NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
+            textItem.customText = shareText;
+            [activityItems addObject:textItem];
+        } else {
+            [activityItems addObject:shareText];
+        }
     }
+    
     if(shareURL){
         [activityItems addObject:shareURL];
     }
@@ -842,6 +850,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
+    BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
+    
     UIBarButtonItem * senderButton = [arguments objectForKey:@"view"];
     
     if (senderButton == nil) {
@@ -849,8 +859,22 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         return;
     }
 
+    NSMutableArray *activityItems = [[NSMutableArray alloc] init];
+    
+    if(shareText){
+        if (emailIsHTML) {
+            NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
+            textItem.customText = shareText;
+            [activityItems addObject:textItem];
+        } else {
+            [activityItems addObject:shareText];
+        }
+        
+    }
+    
     UIImage *image = [self findImage:shareImage];
-    NSArray *activityItems = [NSArray arrayWithObjects:shareText,image, nil];
+    [activityItems addObject:image];
+    
 
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
