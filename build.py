@@ -67,7 +67,7 @@ def generate_doc(config):
 	return documentation
 
 def compile_js(manifest,config):
-	js_file = os.path.join(cwd,'assets','dk.napp.drawer.js')
+	js_file = os.path.join(cwd,'assets','dk.napp.social.js')
 	if not os.path.exists(js_file): return
 
 	from compiler import Compiler
