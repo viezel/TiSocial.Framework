@@ -238,6 +238,10 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+***v1.7.8***
+
+* Added support for 64-bit. Previous attempt was incorrect.
+
 ***v1.7.7***
 
 * Added support for email only html customization
