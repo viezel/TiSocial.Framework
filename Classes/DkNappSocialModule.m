@@ -809,7 +809,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 			NSDictionary *event = @{
 				@"success": @YES,
 				@"platform": @"activityView",
-				@"activity": NUMINT(activity),
+				@"activity": NUMLONG(activity),
 				@"activityName": act
 			};
 			[self fireEvent:@"complete" withObject:event];
@@ -872,9 +872,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         
     }
     
-    UIImage *image = [self findImage:shareImage];
-    [activityItems addObject:image];
-    
+	UIImage *image;
+	if (shareImage) {
+		image = [self findImage:shareImage];
+		[activityItems addObject:image];
+	}
+	
 
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
     
@@ -926,7 +929,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 			NSDictionary *event = @{
 				@"success": @YES,
 				@"platform": @"activityPopover",
-				@"activity": NUMINT(activity),
+				@"activity": NUMLONG(activity),
 				@"activityName": act
 			};
 			[self fireEvent:@"complete" withObject:event];
