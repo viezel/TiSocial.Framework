@@ -755,13 +755,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     if(shareURL){
         [activityItems addObject:shareURL];
     }
-    
-    
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
-    
+
+	UIActivityViewController *avc;
+
 	// Custom Activities
-    NSMutableArray * activities = [[NSMutableArray alloc] init];
     if (customActivities != nil){
+		NSMutableArray * activities = [[NSMutableArray alloc] init];
         for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
@@ -779,9 +778,15 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         }
 
         avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
-    } 
-    
-    
+	} else {
+		avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+	}
+		
+	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
+	if (subject) {
+		[avc setValue:subject forKey:@"subject"];
+	}
+
     // Custom Icons
     if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
@@ -847,6 +852,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     // Get Properties from JavaScript
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
+	NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
@@ -871,7 +877,11 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         }
         
     }
-    
+
+	if(shareURL){
+		[activityItems addObject:shareURL];
+	}
+	
 	UIImage *image;
 	if (shareImage) {
 		image = [self findImage:shareImage];
@@ -879,11 +889,11 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	}
 	
 
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+    UIActivityViewController *avc;
     
     // Custom Activities
-    NSMutableArray * activities = [[NSMutableArray alloc] init];
     if (customActivities != nil){
+		NSMutableArray * activities = [[NSMutableArray alloc] init];
         for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
@@ -901,8 +911,15 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         }
 
         avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
-    }
-    
+	} else {
+		avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+	}
+
+	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
+	if (subject) {
+		[avc setValue:subject forKey:@"subject"];
+	}
+
     // Custom Icons
     if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];

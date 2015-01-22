@@ -186,6 +186,7 @@ The first required `options` argument can have the following keys:
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 * *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
+* *subject* - a subject to be used when sharing through email
 
 The second optional argument is an array with objects. Use this to create custom UIActivities. 
 The posibilties are almost endless. have a look at: *http://uiactivities.com* for inspiration.
@@ -193,6 +194,7 @@ The posibilties are almost endless. have a look at: *http://uiactivities.com* fo
 ```javascript
 Social.activityView({
     text:"share like a king!",
+    subject:"I would like to share this with you",
     image:"pin.png",
     removeIcons:"print,sms,copy,contact,camera,mail",
     emailIsHTML : false
@@ -217,10 +219,12 @@ Social.activityView({
 The first required `options` argument can have the following keys:
 
 * *text* - the status message
+* *url* - a url you want to share
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
 * *view* - the source button
 * *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
+* *subject* - a subject to be used when sharing through email
 
 The second optional argument is an array with objects. Use this to create custom UIActivities.
 
@@ -237,6 +241,16 @@ Please check the *Example* section in the file.
 
 
 ## Changelog
+
+***v.1.7.10***
+
+* Added missing URL option to iPad activity sheet
+* Added subject for email as mentioned in #112
+* Fixed a potential memory leak
+
+***v.1.7.9***
+
+* Fixed issue with popover not showing on iPad
 
 ***v1.7.8***
 
