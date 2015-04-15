@@ -53,6 +53,8 @@
 		24DE9E0F11C5FE74003F90F6 /* DkNappSocialModuleAssets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DkNappSocialModuleAssets.h; path = Classes/DkNappSocialModuleAssets.h; sourceTree = "<group>"; };
 		24DE9E1011C5FE74003F90F6 /* DkNappSocialModuleAssets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DkNappSocialModuleAssets.m; path = Classes/DkNappSocialModuleAssets.m; sourceTree = "<group>"; };
 		69B6065715A4DC4800AB991D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		8FE4A5C81ADE7CCD009C9EED /* module.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = module.xcconfig; sourceTree = "<group>"; };
+		8FE4A5C91ADE7CDB009C9EED /* manifest */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = manifest; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DkNappSocial_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B603B54B1700E18B002E4196 /* NappCustomActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NappCustomActivity.h; path = Classes/NappCustomActivity.h; sourceTree = "<group>"; };
@@ -124,6 +126,8 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8FE4A5C91ADE7CDB009C9EED /* manifest */,
+				8FE4A5C81ADE7CCD009C9EED /* module.xcconfig */,
 				AA747D9E0F9514B9006C5449 /* DkNappSocial_Prefix.pch */,
 				24DD6D1B1134B66800162E58 /* titanium.xcconfig */,
 			);
