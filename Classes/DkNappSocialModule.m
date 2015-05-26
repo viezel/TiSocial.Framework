@@ -17,6 +17,8 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
+//#import "TiUIButtonProxy.h"
+
 @implementation DkNappSocialModule
 
 # pragma mark Activties
@@ -960,7 +962,27 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         [self setPassthroughViews:passthroughViews];
     }
 
-    [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    TiThreadPerformOnMainThread(^{
+        
+        if ([TiUtils isIOS8OrGreater]) {
+            
+            
+            [avc setModalPresentationStyle:UIModalPresentationPopover];
+            avc.popoverPresentationController.barButtonItem = senderButton;
+            avc.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            
+            
+            
+            //[[TiApp app] showModalController:avc animated:YES];
+            //return;
+            
+            [[[TiApp app]controller] presentViewController:avc animated:YES completion:nil];
+            
+            return;
+        }
+        
+        [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }, YES);
 }
 
 -(void)setPassthroughViews:(id)args
@@ -1020,4 +1042,29 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
     return excludedIcons;
 }
+
+#pragma mark - UIPopoverPresentationController Delegate
+- (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
+{
+    NSLog(@"[INFO] prepareForPopoverPresentation");
+    
+    UIViewController* presentingController = [popoverPresentationController presentingViewController];
+    popoverPresentationController.sourceView = [presentingController view];
+    CGRect viewrect = [[presentingController view] bounds];
+    if (viewrect.size.height > 50) {
+        viewrect.size.height = 50;
+    }
+    popoverPresentationController.sourceRect = viewrect;
+}
+
+- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
+{
+    NSLog(@"[INFO] popoverPresentationController:willRepositionPopoverToRect");
+}
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    NSLog(@"[INFO] popoverPresentationControllerDidDismissPopover");
+}
+
 @end

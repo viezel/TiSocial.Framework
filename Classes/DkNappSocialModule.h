@@ -9,6 +9,10 @@
 #import <Accounts/Accounts.h>
 
 @interface DkNappSocialModule : TiModule
+<
+UIPopoverControllerDelegate,
+UIPopoverPresentationControllerDelegate
+>
 {
     ACAccountStore* accountStore;
 	UIPopoverController *popoverController;
