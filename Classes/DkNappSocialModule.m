@@ -898,11 +898,28 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 		[activityItems addObject:shareURL];
 	}
 	
-	UIImage *image;
-	if (shareImage) {
-		image = [self findImage:shareImage];
-		[activityItems addObject:image];
-	}
+    id TiImageObject = [arguments objectForKey:@"image"];
+    if(TiImageObject != nil){
+        //see if we passed in a string reference to the file or a TiBlob object
+        if([TiImageObject isKindOfClass:[TiBlob class]]){
+            
+            UIImage *image = [(TiBlob*)TiImageObject image];
+            if(image){
+                [activityItems addObject:image];
+            }
+            
+        } else {
+            
+            NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+            if (shareImage != nil) {
+                UIImage *image = [self findImage:shareImage];
+                if(image){
+                    [activityItems addObject:image];
+                }
+            }
+        }
+    }
+
 	
 
     UIActivityViewController *avc;
