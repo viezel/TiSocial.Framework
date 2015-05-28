@@ -242,6 +242,14 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+***v.1.8.1***
+
+* Added support for iOS8 Popover (@adesugbaa)
+
+***v.1.8.0***
+
+* Avoiding conflict with new Facebook module (#129)
+
 ***v.1.7.10***
 
 * Added missing URL option to iPad activity sheet
