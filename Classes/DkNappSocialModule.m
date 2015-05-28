@@ -17,6 +17,9 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
+#import "TiUIButtonProxy.h"
+#import "TiUIViewProxy.h"
+
 @implementation DkNappSocialModule
 
 # pragma mark Activties
@@ -858,12 +861,25 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
     
-    UIBarButtonItem * senderButton = [arguments objectForKey:@"view"];
+    id senderButton = [arguments objectForKey:@"view"];
     
     if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
         return;
     }
+    
+    NSString* viewType = NSStringFromClass([senderButton class]);
+    
+    if (![viewType isEqualToString:@"TiUIButtonProxy"] && ![viewType isEqualToString:@"TiUIViewProxy"]) {
+        NSLog(@"[ERROR] property: view - must be a button or view");
+        return;
+    }
+    
+    //NSLog(@"[INFO] Button Found", nil);
+    //NSLog(@"[INFO] View Type: %@", viewType);
+    
+    //CGRect rect = [TiUtils rectValue: [(TiUIViewProxy*)senderButton view]];
+    //NSLog(@"[INFO] Size: x: %f,y: %f, width: %f, height: %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
@@ -882,11 +898,28 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 		[activityItems addObject:shareURL];
 	}
 	
-	UIImage *image;
-	if (shareImage) {
-		image = [self findImage:shareImage];
-		[activityItems addObject:image];
-	}
+    id TiImageObject = [arguments objectForKey:@"image"];
+    if(TiImageObject != nil){
+        //see if we passed in a string reference to the file or a TiBlob object
+        if([TiImageObject isKindOfClass:[TiBlob class]]){
+            
+            UIImage *image = [(TiBlob*)TiImageObject image];
+            if(image){
+                [activityItems addObject:image];
+            }
+            
+        } else {
+            
+            NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+            if (shareImage != nil) {
+                UIImage *image = [self findImage:shareImage];
+                if(image){
+                    [activityItems addObject:image];
+                }
+            }
+        }
+    }
+
 	
 
     UIActivityViewController *avc;
@@ -960,7 +993,46 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         [self setPassthroughViews:passthroughViews];
     }
 
-    [popoverController presentPopoverFromBarButtonItem:senderButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    TiThreadPerformOnMainThread(^{
+        
+        if ([TiUtils isIOS8OrGreater]) {
+            
+            
+            [avc setModalPresentationStyle:UIModalPresentationPopover];
+            
+            if ([senderButton isMemberOfClass:[TiUIButtonProxy class]]) {
+                UIBarButtonItem* buttonItem = [(TiUIButtonProxy*)senderButton barButtonItem];
+                avc.popoverPresentationController.barButtonItem = buttonItem;
+            }
+            else if ([senderButton isMemberOfClass:[TiUIViewProxy class]]) {
+                UIView* sourceView = [(TiUIViewProxy*)senderButton view];
+                avc.popoverPresentationController.sourceView = [[TiApp controller] view];
+                CGPoint centerPoint = [sourceView center];
+                avc.popoverPresentationController.sourceRect = CGRectMake(centerPoint.x, centerPoint.y, 1.0f, 1.0f);
+            }
+            else {
+                return;
+            }
+            
+            avc.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            
+            //[[TiApp app] showModalController:avc animated:YES];
+            [[[TiApp app]controller] presentViewController:avc animated:YES completion:nil];
+            
+            return;
+        }
+        
+        // iOS 7 and below
+        if ([senderButton isMemberOfClass:[TiUIButtonProxy class]]) {
+            UIBarButtonItem* buttonItem = [(TiUIButtonProxy*)senderButton barButtonItem];
+            [popoverController presentPopoverFromBarButtonItem:buttonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
+        else if ([senderButton isMemberOfClass:[TiUIViewProxy class]]) {
+            UIView* sourceView = [(TiUIViewProxy*)senderButton view];
+            [popoverController presentPopoverFromRect:sourceView.frame inView:[[TiApp controller] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
+        
+    }, YES);
 }
 
 -(void)setPassthroughViews:(id)args
@@ -1020,4 +1092,29 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
     return excludedIcons;
 }
+
+#pragma mark - UIPopoverPresentationController Delegate
+- (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
+{
+    NSLog(@"[INFO] prepareForPopoverPresentation");
+    
+    UIViewController* presentingController = [popoverPresentationController presentingViewController];
+    popoverPresentationController.sourceView = [presentingController view];
+    CGRect viewrect = [[presentingController view] bounds];
+    if (viewrect.size.height > 50) {
+        viewrect.size.height = 50;
+    }
+    popoverPresentationController.sourceRect = viewrect;
+}
+
+- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
+{
+    NSLog(@"[INFO] popoverPresentationController:willRepositionPopoverToRect");
+}
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    NSLog(@"[INFO] popoverPresentationControllerDidDismissPopover");
+}
+
 @end
