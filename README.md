@@ -182,6 +182,7 @@ Each of these options is optional
 The first required `options` argument can have the following keys:
 
 * *text* - the status message
+* *htmlText* - html message to use in the e-mail activity (requires emailIsHTML = true). If null will use the "text" message
 * *url* - a url you want to share
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.
@@ -219,6 +220,7 @@ Social.activityView({
 The first required `options` argument can have the following keys:
 
 * *text* - the status message
+* *htmlText* - html message to use in the e-mail activity (requires emailIsHTML = true). If null will use the "text" message
 * *url* - a url you want to share
 * *image* - a local/remote path to an image you want to share
 * *removeIcons* - customise the dialog by removing unwanted icons.

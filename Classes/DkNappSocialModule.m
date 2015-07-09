@@ -714,6 +714,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
 
     // Get Properties from JavaScript
+    NSString *htmlshareText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
@@ -746,11 +747,15 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     if(shareText){
-        if (emailIsHTML) {
+        if(emailIsHTML){
             NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
             textItem.customText = shareText;
+            textItem.customHtmlText = shareText;
+            if(htmlshareText){
+                textItem.customHtmlText = htmlshareText;
+            }
             [activityItems addObject:textItem];
-        } else {
+        }else{
             [activityItems addObject:shareText];
         }
     }
@@ -854,6 +859,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     // Get Properties from JavaScript
+    NSString *htmlshareText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
 	NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
@@ -884,14 +890,17 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
     if(shareText){
-        if (emailIsHTML) {
+        if(emailIsHTML){
             NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
             textItem.customText = shareText;
+            textItem.customHtmlText = shareText;
+            if(htmlshareText){
+                textItem.customHtmlText = htmlshareText;
+            }
             [activityItems addObject:textItem];
-        } else {
+        }else{
             [activityItems addObject:shareText];
         }
-        
     }
 
 	if(shareURL){
