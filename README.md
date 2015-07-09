@@ -244,6 +244,10 @@ Please check the *Example* section in the file.
 
 ## Changelog
 
+***v.1.8.2***
+
+* Support HTML text for email and plain text for other activities   
+
 ***v.1.8.1***
 
 * Added support for iOS8 Popover (@adesugbaa)
@@ -390,6 +394,9 @@ twitter: @rafaelks
 
 **Joseandro Luiz**  
 twitter: @joseandroluiz
+
+**Carlos Zinato**  
+twitter: @chmiiller
 
 ## License
 
