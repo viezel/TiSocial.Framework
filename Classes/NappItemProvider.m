@@ -2,6 +2,7 @@
 
 @implementation NappItemProvider
 @synthesize customText = _customText;
+@synthesize customHtmlText = _customHtmlText;
 
 - (id)initWithPlaceholderItem:(id)placeholderItem
 {
@@ -16,10 +17,13 @@
 - (id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(NSString *)activityType
 {
     if ([activityType isEqualToString:UIActivityTypeMail]) {
-        NSString *text = [NSString stringWithFormat:@"%@%@%@", @"<html><head></head><body>", _customText, @"</body></html>"];
+        NSString *text = [NSString stringWithFormat:@"%@%@%@", @"<html><head></head><body>", _customHtmlText, @"</body></html>"];
         NSLog(@"[INFO] Sharing the following as HTML %@",text);
         
         return text;
+    }else{
+    	NSString *nonhtmltext = [NSString stringWithFormat:@"%@", _customText];
+        return nonhtmltext;
     }
     
     return @"";
