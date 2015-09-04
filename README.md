@@ -15,9 +15,9 @@ The module is licensed under the MIT license.
 ## Referencing the module in your Titanium Mobile application ##
 
 Simply add the following lines to your `tiapp.xml` file:
-    
+
     <modules>
-        <module platform="iphone">dk.napp.social</module> 
+        <module platform="iphone">dk.napp.social</module>
     </modules>
 
 
@@ -57,7 +57,7 @@ Each of these options is optional
 So *screen_name* is the parameter name / key and *CBeloch* is the value of the parameter
 
 ### Social.twitterAccountList()
-Returns a list of twiiter accounts. use the EventListener `accountList` to capture this list. 
+Returns a list of twiiter accounts. use the EventListener `accountList` to capture this list.
 
 ```javascript
 Social.addEventListener("accountList", function(e){
@@ -101,7 +101,7 @@ Each of these options is optional
 So *fields* is the parameter name / key and *id,name,devices* is the value of the parameter
 
 ### Social.grantFacebookPermissions
-Before you can send request to the Facebook API, you start by getting the users permissions. 
+Before you can send request to the Facebook API, you start by getting the users permissions.
 
 ```javascript
 var fbAccount;
@@ -109,8 +109,8 @@ Social.grantFacebookPermissions({
     appIdKey:"YOUR_FB_APP_ID",
     permissionsKey: "email" //FB docs: https://developers.facebook.com/docs/reference/login/extended-permissions/
 });
-Social.addEventListener("facebookAccount", function(e){ 
-    fbAccount = e.account; //now you have stored the FB account. You can then request facebook using the below method 
+Social.addEventListener("facebookAccount", function(e){
+    fbAccount = e.account; //now you have stored the FB account. You can then request facebook using the below method
 });
 ```
 
@@ -121,7 +121,7 @@ Request Facebook with a specific account.
 ```javascript
 Social.requestFacebookWithIdentifier({
     requestType:"GET",
-    accountWithIdentifier: fbAccount["identifier"], //start by granting facebook permissions 
+    accountWithIdentifier: fbAccount["identifier"], //start by granting facebook permissions
     url:"https://graph.facebook.com/me",
     callbackEvent: "facebookProfile",
 }, {
@@ -131,8 +131,8 @@ Social.requestFacebookWithIdentifier({
 
 ### Social.renewFacebookAccessToken
 
-The accessToken will eventually be invalid, if you store the FB acccount in a App property or storage of some kind. This method can renew the accessToken, and make you able to request Facebook again. 
-This method rely on the same *facebookAccount* eventlistener, as `grantFacebookPermissions`. 
+The accessToken will eventually be invalid, if you store the FB acccount in a App property or storage of some kind. This method can renew the accessToken, and make you able to request Facebook again.
+This method rely on the same *facebookAccount* eventlistener, as `grantFacebookPermissions`.
 
 ```javascript
 Social.renewFacebookAccessToken();
@@ -188,8 +188,9 @@ The first required `options` argument can have the following keys:
 * *removeIcons* - customise the dialog by removing unwanted icons.
 * *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
 * *subject* - a subject to be used when sharing through email
+* *platformAppendText* - an object with custom strings to add to different share providers. Possible values are: "twitter", "message", "whatsapp" or the id of the extension like "com.buffer.buffer.BufferComposeExtension". Facebook is not included, because the new FacebookSDK only allows for sharing URLs.
 
-The second optional argument is an array with objects. Use this to create custom UIActivities. 
+The second optional argument is an array with objects. Use this to create custom UIActivities.
 The posibilties are almost endless. have a look at: *http://uiactivities.com* for inspiration.
 
 ```javascript
@@ -198,7 +199,15 @@ Social.activityView({
     subject:"I would like to share this with you",
     image:"pin.png",
     removeIcons:"print,sms,copy,contact,camera,mail",
-    emailIsHTML : false
+    emailIsHTML : false,
+
+    platformAppendText: {
+        twitter: ' via @twitter #twitter',
+        message: ' via www.example.com',
+        whatsapp: ' via 555-1234567',
+        'com.buffer.buffer.BufferComposeExtension': ' via Buffer'
+    }
+
 },[
     {
         title:"Custom Share",
@@ -227,6 +236,7 @@ The first required `options` argument can have the following keys:
 * *view* - the source button
 * *emailIsHTML* - Optional boolean flag that tells if email content should be in html format.
 * *subject* - a subject to be used when sharing through email
+* *platformAppendText* - an object with custom strings to add to different share providers. Possible values are: "twitter", "message", "whatsapp" or the id of the extension like "com.buffer.buffer.BufferComposeExtension". Facebook is not included, because the new FacebookSDK only allows for sharing URLs.
 
 The second optional argument is an array with objects. Use this to create custom UIActivities.
 
@@ -364,11 +374,11 @@ Please check the *Example* section in the file.
 
 **v1.1**    
 
-* SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`. 
+* SLRequest methods implemented. `requestFacebook()` and `requestTwitter()`.
 
 **v1.0**    
 
-* Initial Implementation of SLComposeViewController. 
+* Initial Implementation of SLComposeViewController.
 
 
 ## Author

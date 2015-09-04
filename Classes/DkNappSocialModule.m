@@ -274,8 +274,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     controller.completionHandler = myBlock;
     
     //get the properties from javascript
-    NSString * shareText = [TiUtils stringValue:@"text" properties:args def:nil];
-    NSString * shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:args def:nil];
+    NSString *emailText = [TiUtils stringValue:@"htmlText" properties:args def:nil];
+
+    NSString *shareUrl = [TiUtils stringValue:@"url" properties:args def:nil];
     
     //added M Hudson 22/10/14 to allow for blob support
     //see if we passed in a string reference to the file or a TiBlob object
@@ -714,26 +716,34 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
 
     // Get Properties from JavaScript
-    NSString *htmlshareText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
-    NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
+    NSString *emailText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
+    NSString *shareURL = [TiUtils stringValue:@"url" properties:arguments def:nil];
+    NSURL *URL = [NSURL URLWithString:[TiUtils stringValue:shareURL]];
+
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
+    
+    NSDictionary *platformAppendText = [arguments objectForKey:@"platformAppendText"];
 
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
-    //added M Hudson 22/10/14 to allow for blob support
+    // image
+    // added M Hudson 22/10/14 to allow for blob support
     
     id TiImageObject = [arguments objectForKey:@"image"];
     if(TiImageObject != nil){
-        //see if we passed in a string reference to the file or a TiBlob object
+        
+        // TiBlob object ?
         if([TiImageObject isKindOfClass:[TiBlob class]]){
         
             UIImage *image = [(TiBlob*)TiImageObject image];
             if(image){
                 [activityItems addObject:image];
             }
-            
+           
+        // or link
         } else {
             
             NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
@@ -745,29 +755,36 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             }
         }
     }
+ 
+    // custom provider
+    NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
+        
+    // strings
+    textItem.customText = shareText;
     
-    if(shareText){
-        if(emailIsHTML){
-            NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
-            textItem.customText = shareText;
-            textItem.customHtmlText = shareText;
-            if(htmlshareText){
-                textItem.customHtmlText = htmlshareText;
-            }
-            [activityItems addObject:textItem];
-        }else{
-            [activityItems addObject:shareText];
-        }
+    if(emailText) {
+        textItem.customTextMail = emailText;
     }
     
-    if(shareURL){
+    textItem.shareURL = shareURL;
+    textItem.URL = URL;
+    
+    textItem.platformAppendText = platformAppendText;
+
+    
+    [activityItems addObject:textItem];
+
+    
+    // share url
+    if(shareURL) {
         [activityItems addObject:shareURL];
     }
-
+    
 	UIActivityViewController *avc;
 
 	// Custom Activities
     if (customActivities != nil){
+        
 		NSMutableArray * activities = [[NSMutableArray alloc] init];
         for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
@@ -785,17 +802,18 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             
         }
 
-        avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+        avc = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:activities];
 	} else {
-		avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
+		avc = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
 	}
-		
+	
+    // mail subject
 	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
 	if (subject) {
 		[avc setValue:subject forKey:@"subject"];
 	}
 
-    // Custom Icons
+    // remove activity icons
     if (removeIcons != nil) {
         NSMutableArray * excludedIcons = [self activityIcons:removeIcons];
         [avc setExcludedActivityTypes:excludedIcons];
@@ -859,13 +877,17 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     // Get Properties from JavaScript
-    NSString *htmlshareText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
-    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
-	NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
+    NSString *emailText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
+    NSString *shareURL = [TiUtils stringValue:@"url" properties:arguments def:nil];
+    NSURL *URL = [NSURL URLWithString:[TiUtils stringValue:shareURL]];
+
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
+    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
+    
+    NSDictionary *platformAppendText = [arguments objectForKey:@"platformAppendText"];
     
     id senderButton = [arguments objectForKey:@"view"];
     
@@ -889,24 +911,30 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
-    if(shareText){
-        if(emailIsHTML){
-            NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
-            textItem.customText = shareText;
-            textItem.customHtmlText = shareText;
-            if(htmlshareText){
-                textItem.customHtmlText = htmlshareText;
-            }
-            [activityItems addObject:textItem];
-        }else{
-            [activityItems addObject:shareText];
-        }
+    // custom provider
+    NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
+    
+    // strings
+    textItem.customText = shareText;
+    
+    if(emailText) {
+        textItem.customTextMail = emailText;
     }
+    
+    textItem.shareURL = shareURL;
+    textItem.URL = URL;
+    
+    textItem.platformAppendText = platformAppendText;
+    
+    [activityItems addObject:textItem];
+    
 
+    // share url
 	if(shareURL){
 		[activityItems addObject:shareURL];
 	}
 	
+    // image
     id TiImageObject = [arguments objectForKey:@"image"];
     if(TiImageObject != nil){
         //see if we passed in a string reference to the file or a TiBlob object
@@ -928,9 +956,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             }
         }
     }
-
 	
-
     UIActivityViewController *avc;
     
     // Custom Activities
