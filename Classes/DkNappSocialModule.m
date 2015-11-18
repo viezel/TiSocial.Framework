@@ -121,7 +121,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	}
 }
 
-#pragma Public APIs
+#pragma mark Public APIs
 
 - (BOOL) validateUrl: (NSString *) candidate {
     NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
@@ -874,15 +874,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         return;
     }
     
-    NSString* viewType = NSStringFromClass([senderButton class]);
-    
-    if (![viewType isEqualToString:@"TiUIButtonProxy"] && ![viewType isEqualToString:@"TiUIViewProxy"]) {
+    if (![senderButton isKindOfClass:[TiUIButtonProxy class]] && ![senderButton isKindOfClass:[TiViewProxy class]]) {
         NSLog(@"[ERROR] property: view - must be a button or view");
         return;
     }
     
     //NSLog(@"[INFO] Button Found", nil);
-    //NSLog(@"[INFO] View Type: %@", viewType);
     
     //CGRect rect = [TiUtils rectValue: [(TiUIViewProxy*)senderButton view]];
     //NSLog(@"[INFO] Size: x: %f,y: %f, width: %f, height: %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
@@ -931,11 +928,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
 	
 
-    UIActivityViewController *avc;
+    NSMutableArray *activities = [NSMutableArray array];
     
     // Custom Activities
     if (customActivities != nil){
-		NSMutableArray * activities = [[NSMutableArray alloc] init];
         for (int i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
@@ -951,11 +947,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             [activities addObject:nappActivity];
             
         }
-
-        avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
-	} else {
-		avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
 	}
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
 
 	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
 	if (subject) {
@@ -968,32 +961,19 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         [avc setExcludedActivityTypes:excludedIcons];
     }
     
-	[avc setCompletionHandler:^(NSString *act, BOOL done) {
-		if (!done) {
-			NSDictionary *event = @{
-				@"success": @NO,
-				@"platform": @"activityPopover",
-			};
-			[self fireEvent:@"cancelled" withObject:event];
-		} else {
-			// Here we must verify if is a CustomActivity or not
-			// to returns ACTIVITY_CUSTOM constant
-			NSInteger activity;
-			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
-				activity = 100;
-			} else {
-				activity = act;
-			}
-			
-			NSDictionary *event = @{
-				@"success": @YES,
-				@"platform": @"activityPopover",
-				@"activity": NUMLONG(activity),
-				@"activityName": act
-			};
-			[self fireEvent:@"complete" withObject:event];
-		}
-	}];
+    // iOS 8 and later should use the item handler instead
+    if ([TiUtils isIOS8OrGreater]) {
+        [avc setCompletionWithItemsHandler:^(NSString *activityType, BOOL completed,  NSArray *returnedItems, NSError *activityError) {
+            [self fireActivityEventWithActivityType:activityType completed:completed];
+            [avc setCompletionWithItemsHandler:nil];
+        
+        }];
+    } else {
+        [avc setCompletionHandler:^(NSString *activityType, BOOL completed) {
+            [self fireActivityEventWithActivityType:activityType completed:completed];
+            [avc setCompletionHandler:nil];
+        }];
+    }
     
     // popOver
     popoverController = [[UIPopoverController alloc] initWithContentViewController:avc];
@@ -1006,39 +986,21 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         
         if ([TiUtils isIOS8OrGreater]) {
             
-            
+            // iOS 8 and later
             [avc setModalPresentationStyle:UIModalPresentationPopover];
             
-            if ([senderButton isMemberOfClass:[TiUIButtonProxy class]]) {
-                UIBarButtonItem* buttonItem = [(TiUIButtonProxy*)senderButton barButtonItem];
-                avc.popoverPresentationController.barButtonItem = buttonItem;
-            }
-            else if ([senderButton isMemberOfClass:[TiUIViewProxy class]]) {
-                UIView* sourceView = [(TiUIViewProxy*)senderButton view];
-                avc.popoverPresentationController.sourceView = [[TiApp controller] view];
-                CGPoint centerPoint = [sourceView center];
-                avc.popoverPresentationController.sourceRect = CGRectMake(centerPoint.x, centerPoint.y, 1.0f, 1.0f);
-            }
-            else {
-                return;
-            }
-            
-            avc.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-            
-            //[[TiApp app] showModalController:avc animated:YES];
-            [[[TiApp app]controller] presentViewController:avc animated:YES completion:nil];
-            
-            return;
-        }
-        
-        // iOS 7 and below
-        if ([senderButton isMemberOfClass:[TiUIButtonProxy class]]) {
-            UIBarButtonItem* buttonItem = [(TiUIButtonProxy*)senderButton barButtonItem];
-            [popoverController presentPopoverFromBarButtonItem:buttonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        }
-        else if ([senderButton isMemberOfClass:[TiUIViewProxy class]]) {
             UIView* sourceView = [(TiUIViewProxy*)senderButton view];
-            [popoverController presentPopoverFromRect:sourceView.frame inView:[[TiApp controller] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            
+            avc.popoverPresentationController.sourceView = sourceView;
+            avc.popoverPresentationController.sourceRect = CGRectZero;
+
+            [popoverController presentPopoverFromRect:sourceView.frame inView:[[[TiApp controller] topPresentedController] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            return;
+        } else {
+            
+            // iOS 7 and earlier
+            UIView* sourceView = [(TiUIViewProxy*)senderButton view];
+            [popoverController presentPopoverFromRect:sourceView.frame inView:[[[TiApp controller] topPresentedController] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         }
         
     }, YES);
@@ -1100,6 +1062,37 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
 
     return excludedIcons;
+}
+
+#pragma mark Helper
+
+-(void)fireActivityEventWithActivityType:(NSString*)activityName completed:(BOOL)completed
+{
+    if (completed == NO) {
+        NSDictionary *event = @{
+                                @"success": NUMBOOL(NO),
+                                @"platform": @"activityPopover",
+                                };
+        [self fireEvent:@"cancelled" withObject:event];
+    } else {
+        // Here we must verify if is a CustomActivity or not
+        // to returns ACTIVITY_CUSTOM constant
+        NSInteger activity;
+        if ([activityName rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+            activity = [self ACTIVITY_CUSTOM];
+        } else {
+            activity = activityName;
+        }
+        
+        NSDictionary *event = @{
+                                @"success": NUMBOOL(YES),
+                                @"platform": @"activityPopover",
+                                @"activity": NUMLONG(activity),
+                                @"activityName": activityName
+                                };
+        
+        [self fireEvent:@"complete" withObject:event];
+    }
 }
 
 #pragma mark - UIPopoverPresentationController Delegate
