@@ -984,7 +984,14 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
     TiThreadPerformOnMainThread(^{
         
-        if ([TiUtils isIOS8OrGreater]) {
+        // Button in navigation bar
+        if ([senderButton supportsNavBarPositioning] && [senderButton isUsingBarButtonItem]) {
+            UIBarButtonItem *item = [senderButton barButtonItem];
+            [popoverController presentPopoverFromBarButtonItem:item permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            return;
+            
+        // Button /View inside window
+        } else if ([TiUtils isIOS8OrGreater]) {
             
             // iOS 8 and later
             [avc setModalPresentationStyle:UIModalPresentationPopover];
@@ -995,7 +1002,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             avc.popoverPresentationController.sourceRect = CGRectZero;
 
             [popoverController presentPopoverFromRect:sourceView.frame inView:[[[TiApp controller] topPresentedController] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-            return;
         } else {
             
             // iOS 7 and earlier
