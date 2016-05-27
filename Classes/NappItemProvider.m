@@ -21,6 +21,9 @@
         NSLog(@"[INFO] Sharing the following as HTML %@",text);
         
         return text;
+    } else if([activityType isEqualToString:UIActivityTypePostToTwitter]) {
+        NSString *customTwitterText = [NSString stringWithFormat:@"%@", _customTwitterText];
+        return customTwitterText;    
     }else{
     	NSString *nonhtmltext = [NSString stringWithFormat:@"%@", _customText];
         return nonhtmltext;

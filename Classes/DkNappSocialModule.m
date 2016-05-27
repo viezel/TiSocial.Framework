@@ -719,7 +719,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
-
+    
+    // Get twitter text for a more specific text
+    NSString *twitterText = [TiUtils stringValue:@"twitterText" properties:arguments def:nil];
+    
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
     //added M Hudson 22/10/14 to allow for blob support
@@ -747,17 +750,20 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
     if(shareText){
-        if(emailIsHTML){
-            NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
-            textItem.customText = shareText;
-            textItem.customHtmlText = shareText;
-            if(htmlshareText){
-                textItem.customHtmlText = htmlshareText;
-            }
-            [activityItems addObject:textItem];
-        }else{
-            [activityItems addObject:shareText];
+        NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];
+        textItem.customText = shareText;
+        textItem.customHtmlText = shareText;
+        textItem.customTwitterText = shareText;
+        
+        if(htmlshareText){
+            textItem.customHtmlText = htmlshareText;
         }
+        
+        if(twitterText) {
+            textItem.customTwitterText = twitterText;
+        }
+        
+        [activityItems addObject:textItem];
     }
     
     if(shareURL){
