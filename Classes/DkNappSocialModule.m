@@ -12,6 +12,7 @@
 #import "TiApp.h"
 #import "NappCustomActivity.h"
 #import "NappItemProvider.h"
+#import "NappImageProvider.h"
 
 //include Social and Accounts Frameworks
 #import <Social/Social.h>
@@ -720,34 +721,46 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
     
-    // Get twitter text for a more specific text
+    // Get custom attributes
     NSString *twitterText = [TiUtils stringValue:@"twitterText" properties:arguments def:nil];
+    NSString *twitterImage = [TiUtils stringValue:@"twitterImage" properties:arguments def:nil];
+    NSString *facebookImage = [TiUtils stringValue:@"facebookImage" properties:arguments def:nil];
     
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
-    //added M Hudson 22/10/14 to allow for blob support
-    
+    //added M Hudson 22/10/14 to allow for blob support    
+    // Image Provider
     id TiImageObject = [arguments objectForKey:@"image"];
     if(TiImageObject != nil){
         //see if we passed in a string reference to the file or a TiBlob object
         if([TiImageObject isKindOfClass:[TiBlob class]]){
-        
+
             UIImage *image = [(TiBlob*)TiImageObject image];
             if(image){
                 [activityItems addObject:image];
             }
             
         } else {
+            NappImageProvider *shareImageProvider = [[NappImageProvider alloc] initWithPlaceholderItem:@""];
             
             NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
-            if (shareImage != nil) {
-                UIImage *image = [self findImage:shareImage];
-                if(image){
-                    [activityItems addObject:image];
-                }
+            shareImageProvider.defaultImage = shareImage;
+            shareImageProvider.twitterImage = shareImage;
+            shareImageProvider.facebookImage = shareImage;
+            
+            if(twitterImage) {
+                shareImageProvider.twitterImage = twitterImage;
             }
+            
+            if(facebookImage) {
+                shareImageProvider.facebookImage = facebookImage;
+            }
+            
+            
+            [activityItems addObject:shareImageProvider];
         }
     }
+    // End Image Provider
     
     if(shareText){
         NappItemProvider *textItem = [[NappItemProvider alloc] initWithPlaceholderItem:@""];

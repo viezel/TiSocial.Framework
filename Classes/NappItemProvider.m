@@ -24,6 +24,9 @@
     } else if([activityType isEqualToString:UIActivityTypePostToTwitter]) {
         NSString *customTwitterText = [NSString stringWithFormat:@"%@", _customTwitterText];
         return customTwitterText;    
+    } else if([activityType isEqualToString:UIActivityTypePostToFacebook]) {
+        NSString *customFacebookText = [NSString stringWithFormat:@"%@", _customFacebookText];
+        return customFacebookText;
     }else{
     	NSString *nonhtmltext = [NSString stringWithFormat:@"%@", _customText];
         return nonhtmltext;
