@@ -398,6 +398,9 @@ twitter: @joseandroluiz
 **Carlos Zinato**  
 twitter: @chmiiller
 
+**João Paulo**  
+twitter: @juaumlol
+
 ## License
 
     Copyright (c) 2010-2013 Mads Møller
