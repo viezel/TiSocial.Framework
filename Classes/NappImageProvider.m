@@ -17,8 +17,9 @@
           itemForActivityType:(NSString *)activityType {
     
     if ( [activityType isEqualToString:UIActivityTypePostToFacebook] ) {
+        NSLog(@"%@", _facebookImage);
         return [self findImage:_facebookImage];
-    } if ( [activityType isEqualToString:UIActivityTypePostToTwitter] ) {
+    } if ( [activityType isEqualToString:UIActivityTypePostToTwitter] && _twitterImage ) {
         return [self findImage:_twitterImage];
     }
     

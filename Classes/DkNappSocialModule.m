@@ -752,8 +752,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
                 shareImageProvider.twitterImage = twitterImage;
             }
             
-            if(facebookImage) {
+            if(facebookImage && !shareURL) {
                 shareImageProvider.facebookImage = facebookImage;
+            } else if(shareURL) {
+                shareImageProvider.facebookImage = nil;
             }
             
             
