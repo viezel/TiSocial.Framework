@@ -7,6 +7,7 @@
  */
 #import "TiModule.h"
 #import <Accounts/Accounts.h>
+#import "TiViewController.h"
 
 @interface DkNappSocialModule : TiModule
 <
@@ -15,8 +16,12 @@ UIPopoverPresentationControllerDelegate
 >
 {
     ACAccountStore* accountStore;
+    CGRect popoverRect;
 	UIPopoverController *popoverController;
+    UIViewController* viewController;
+    id senderButton;
 }
+
 
 @property(nonatomic,readonly) NSNumber *ACTIVITY_FACEBOOK;
 @property(nonatomic,readonly) NSNumber *ACTIVITY_TWITTER;
