@@ -886,9 +886,10 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
+
     BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
     
-    id senderButton = [arguments objectForKey:@"view"];
+    senderButton = [arguments objectForKey:@"view"];
     
     if (senderButton == nil) {
         NSLog(@"[ERROR] You must specify a source button - property: view");
@@ -900,10 +901,18 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         return;
     }
     
+    if([arguments objectForKey:@"rect"]){
+        popoverRect = [TiUtils rectValue: [arguments objectForKey:@"rect"]];
+    }else{
+        popoverRect = CGRectZero;
+    }
+    
+    
     //NSLog(@"[INFO] Button Found", nil);
     
-    //CGRect rect = [TiUtils rectValue: [(TiUIViewProxy*)senderButton view]];
+//    CGRect rect = [TiUtils rectValue: [(TiUIViewProxy*)senderButton view]];
     //NSLog(@"[INFO] Size: x: %f,y: %f, width: %f, height: %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    
 
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
     
@@ -1017,16 +1026,20 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             // iOS 8 and later
             [avc setModalPresentationStyle:UIModalPresentationPopover];
             
-            UIView* sourceView = [(TiUIViewProxy*)senderButton view];
             
-            avc.popoverPresentationController.sourceView = sourceView;
-            avc.popoverPresentationController.sourceRect = CGRectZero;
+            viewController = [[TiViewController alloc] initWithViewProxy:senderButton];
+            
+            [avc setModalPresentationStyle:UIModalPresentationPopover];
+            UIPopoverPresentationController* presentationController = [avc popoverPresentationController];
+            presentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            presentationController.delegate = self;
+            
+            [[TiApp app] showModalController:avc animated:YES];
 
-            [popoverController presentPopoverFromRect:sourceView.frame inView:[[[TiApp controller] topPresentedController] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         } else {
             
             // iOS 7 and earlier
-            UIView* sourceView = [(TiUIViewProxy*)senderButton view];
+            UIView* sourceView = [senderButton view];
             [popoverController presentPopoverFromRect:sourceView.frame inView:[[[TiApp controller] topPresentedController] view] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         }
         
@@ -1126,14 +1139,24 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 - (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
 {
     NSLog(@"[INFO] prepareForPopoverPresentation");
+
+     if (senderButton != nil) {
+        UIView* view = [senderButton view];
+         
+         if (view != nil && (view.window != nil)) {
+
+            popoverPresentationController.sourceView = view;
+            popoverPresentationController.sourceRect = (CGRectEqualToRect(CGRectZero, popoverRect)?[view bounds]:popoverRect);
+            return;
+        }
+     }
     
-    UIViewController* presentingController = [popoverPresentationController presentingViewController];
+
+    //Fell through.
+    UIViewController* presentingController = [viewController presentingViewController];
     popoverPresentationController.sourceView = [presentingController view];
-    CGRect viewrect = [[presentingController view] bounds];
-    if (viewrect.size.height > 50) {
-        viewrect.size.height = 50;
-    }
-    popoverPresentationController.sourceRect = viewrect;
+    popoverPresentationController.sourceRect = (CGRectEqualToRect(CGRectZero, popoverRect)?CGRectMake(presentingController.view.bounds.size.width/2, presentingController.view.bounds.size.height/2, 1, 1):popoverRect);
+
 }
 
 - (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
