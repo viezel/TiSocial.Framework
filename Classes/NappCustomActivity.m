@@ -8,7 +8,7 @@
 
 #import "NappCustomActivity.h"
 
-@interface NappCustomActivity()
+@interface NappCustomActivity ()
 
 @property (copy, nonatomic) NSArray *activityItems;
 @property (strong, nonatomic) NSString *title;
@@ -21,64 +21,70 @@
 
 @implementation NappCustomActivity
 
+- (void)dealloc {
+  [_activityItems release];
+  [_title release];
+  [_type release];
+  [_image release];
+  [_module release];
+  [_callback release];
+
+  [super dealloc];
+}
 
 #pragma mark - Hierarchy
 #pragma mark UIActivity
 
-- (NSString *)activityType
-{
-    return self.type;
+- (NSString *)activityType {
+  return self.type;
 }
 
-- (NSString *)activityTitle
-{
-    return self.title;
+- (NSString *)activityTitle {
+  return self.title;
 }
 
 - (void)prepareWithActivityItems:(NSArray *)activityItems {
-    self.activityItems = activityItems;
+  self.activityItems = activityItems;
 }
 
-- (BOOL)canPerformWithActivityItems:(NSArray *)activityItems
-{
-    return YES;
+- (BOOL)canPerformWithActivityItems:(NSArray *)activityItems {
+  return YES;
 }
 
-- (UIImage *)activityImage
-{
-    return self.image;
+- (UIImage *)activityImage {
+  return self.image;
 }
 
 - (UIViewController *)activityViewController {
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: self.title,@"title", self.type,@"type", self.type,@"activityName",nil];
+  NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:self.title, @"title", self.type, @"type", self.type, @"activityName", nil];
 
-    [self.module fireEvent:@"customActivity" withObject:event];
-    if (self.callback) {
-        NSArray* array = [NSArray arrayWithObjects: event, nil];
-        
-        [self.callback call:array thisObject:nil];
-    }
-    [self activityDidFinish:YES];
-    return nil;
+  [self.module fireEvent:@"customActivity" withObject:event];
+  if (self.callback) {
+    NSArray *array = [NSArray arrayWithObjects:event, nil];
+
+    [self.callback call:array thisObject:nil];
+  }
+  [self activityDidFinish:YES];
+  return nil;
 }
 
 #pragma mark - Self
 #pragma mark NappCustomActivity
 
 - (UIViewController *)performWithActivityItems:(NSArray *)activityItems {
-    [self activityDidFinish:YES];
+  [self activityDidFinish:YES];
 }
 
--(id)initWithSettings:(NSDictionary *)dict{
-    self = [super init];
-    if(self) {
-        self.type = [dict objectForKey:@"type"];
-        self.title = [dict objectForKey:@"title"];
-        self.image = [dict objectForKey:@"image"];
-        self.module = [dict objectForKey:@"module"];
-        self.callback = [dict objectForKey:@"callback"];
-    }
-    return(self);
+- (id)initWithSettings:(NSDictionary *)dict {
+  self = [super init];
+  if (self) {
+    self.type = [dict objectForKey:@"type"];
+    self.title = [dict objectForKey:@"title"];
+    self.image = [dict objectForKey:@"image"];
+    self.module = [dict objectForKey:@"module"];
+    self.callback = [dict objectForKey:@"callback"];
+  }
+  return (self);
 }
 
 @end

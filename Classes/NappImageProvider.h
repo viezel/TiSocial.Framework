@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface NappImageProvider : UIActivityItemProvider
+
 @property (nonatomic, strong) NSString *facebookImage;
 @property (nonatomic, strong) NSString *twitterImage;
 @property (nonatomic, strong) NSString *defaultImage;
+
 @end
