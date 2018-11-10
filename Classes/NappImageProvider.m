@@ -13,6 +13,15 @@
 @synthesize twitterImage = _twitterImage;
 @synthesize defaultImage = _defaultImage;
 
+- (void)dealloc
+{
+  [_facebookImage release];
+  [_twitterImage release];
+  [_defaultImage release];
+  
+  [super dealloc];
+}
+
 - (id) activityViewController:(UIActivityViewController *)activityViewController
           itemForActivityType:(NSString *)activityType {
     

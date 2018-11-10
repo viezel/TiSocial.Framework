@@ -4,6 +4,15 @@
 @synthesize customText = _customText;
 @synthesize customHtmlText = _customHtmlText;
 
+- (void)dealloc
+{
+  [_customText release];
+  [_customHtmlText release];
+  [_customTwitterText release];
+
+  [super dealloc];
+}
+
 - (id)initWithPlaceholderItem:(id)placeholderItem
 {
     return [super initWithPlaceholderItem:placeholderItem];

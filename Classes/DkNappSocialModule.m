@@ -25,26 +25,24 @@
 
 # pragma mark Activties
 
-MAKE_SYSTEM_PROP(ACTIVITY_FACEBOOK, UIActivityTypePostToFacebook);
-MAKE_SYSTEM_PROP(ACTIVITY_TWITTER, UIActivityTypePostToTwitter);
-MAKE_SYSTEM_PROP(ACTIVITY_WEIBO, UIActivityTypePostToWeibo);
-MAKE_SYSTEM_PROP(ACTIVITY_MESSAGE, UIActivityTypeMessage);
-MAKE_SYSTEM_PROP(ACTIVITY_MAIL, UIActivityTypeMail);
-MAKE_SYSTEM_PROP(ACTIVITY_PRINT, UIActivityTypePrint);
-MAKE_SYSTEM_PROP(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
-MAKE_SYSTEM_PROP(ACTIVITY_ASSIGN_CONTACT, UIActivityTypeAssignToContact);
-MAKE_SYSTEM_PROP(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
-
-// iOS7+
-MAKE_SYSTEM_PROP(ACTIVITY_READING_LIST, UIActivityTypeAddToReadingList);
-MAKE_SYSTEM_PROP(ACTIVITY_FLICKR, UIActivityTypePostToFlickr);
-MAKE_SYSTEM_PROP(ACTIVITY_VIMEO, UIActivityTypePostToVimeo);
-MAKE_SYSTEM_PROP(ACTIVITY_AIRDROP, UIActivityTypeAirDrop);
-MAKE_SYSTEM_PROP(ACTIVITY_TENCENT_WEIBO, UIActivityTypePostToTencentWeibo);
+MAKE_SYSTEM_STR(ACTIVITY_FACEBOOK, UIActivityTypePostToFacebook);
+MAKE_SYSTEM_STR(ACTIVITY_TWITTER, UIActivityTypePostToTwitter);
+MAKE_SYSTEM_STR(ACTIVITY_WEIBO, UIActivityTypePostToWeibo);
+MAKE_SYSTEM_STR(ACTIVITY_MESSAGE, UIActivityTypeMessage);
+MAKE_SYSTEM_STR(ACTIVITY_MAIL, UIActivityTypeMail);
+MAKE_SYSTEM_STR(ACTIVITY_PRINT, UIActivityTypePrint);
+MAKE_SYSTEM_STR(ACTIVITY_COPY, UIActivityTypeCopyToPasteboard);
+MAKE_SYSTEM_STR(ACTIVITY_ASSIGN_CONTACT, UIActivityTypeAssignToContact);
+MAKE_SYSTEM_STR(ACTIVITY_SAVE_CAMERA, UIActivityTypeSaveToCameraRoll);
+MAKE_SYSTEM_STR(ACTIVITY_READING_LIST, UIActivityTypeAddToReadingList);
+MAKE_SYSTEM_STR(ACTIVITY_FLICKR, UIActivityTypePostToFlickr);
+MAKE_SYSTEM_STR(ACTIVITY_VIMEO, UIActivityTypePostToVimeo);
+MAKE_SYSTEM_STR(ACTIVITY_AIRDROP, UIActivityTypeAirDrop);
+MAKE_SYSTEM_STR(ACTIVITY_TENCENT_WEIBO, UIActivityTypePostToTencentWeibo);
+MAKE_SYSTEM_STR(ACTIVITY_OPEN_IN_IBOOKS, UIActivityTypeOpenInIBooks);
 
 // Custom
-MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
-
+MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, "custom_activity");
 
 #pragma mark Internal
 
@@ -72,54 +70,6 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	accountStore = nil;
 
 	NSLog(@"[INFO] %@ loaded",self);
-}
-
--(void)shutdown:(id)sender
-{
-	// this method is called when the module is being unloaded
-	// typically this is during shutdown. make sure you don't do too
-	// much processing here or the app will be quit forceably
-	
-	// you *must* call the superclass
-	[super shutdown:sender];
-}
-
-#pragma mark Cleanup 
-
--(void)dealloc
-{
-	// release any resources that have been retained by the module (project uses ARC now)
-	[super dealloc];
-}
-
-#pragma mark Internal Memory Management
-
--(void)didReceiveMemoryWarning:(NSNotification*)notification
-{
-	// optionally release any resources that can be dynamically
-	// reloaded once memory is available - such as caches
-	[super didReceiveMemoryWarning:notification];
-}
-
-#pragma mark Listener Notifications
-
--(void)_listenerAdded:(NSString *)type count:(int)count
-{
-	if (count == 1 && [type isEqualToString:@"my_event"])
-	{
-		// the first (of potentially many) listener is being added 
-		// for event named 'my_event'
-	}
-}
-
--(void)_listenerRemoved:(NSString *)type count:(int)count
-{
-	if (count == 0 && [type isEqualToString:@"my_event"])
-	{
-		// the last listener called for event named 'my_event' has
-		// been removed, we can optionally clean up any resources
-		// since no body is listening at this point for that event
-	}
 }
 
 #pragma mark Public APIs
@@ -228,7 +178,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
              
              NSMutableArray *accounts = [[NSMutableArray alloc] init];
              NSMutableDictionary * dictAccounts = [[NSMutableDictionary alloc] init];
-             for( int i = 0; i < [arrayOfAccounts count]; i++ )
+             for (NSInteger i = 0; i < [arrayOfAccounts count]; i++ )
              {
                  ACAccount * account = [arrayOfAccounts objectAtIndex:i];
                  NSString *userID = [[account valueForKey:@"properties"] valueForKey:@"user_id"];
@@ -241,6 +191,9 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
              }
              [dictAccounts setObject:accounts forKey:@"accounts"];
              [self fireEvent:@"accountList" withObject:dictAccounts];
+             RELEASE_TO_NIL(accounts);
+             RELEASE_TO_NIL(arrayOfAccounts);
+             RELEASE_TO_NIL(dictAccounts);
          } else {
              NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO),@"success",@"No account",@"status",[error localizedDescription], @"message", @"twitter",@"platform",nil];
              [self fireEvent:@"error" withObject:event];
@@ -311,8 +264,8 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     [[TiApp app] showModalController:controller animated:animated];
 
-	NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
-	[self fireEvent:@"dialogOpen" withObject:nil];
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:platform, @"platform",nil];
+    [self fireEvent:@"dialogOpen" withObject:event];
 }
 
 /*
@@ -346,7 +299,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSDictionary *options = @{
                               ACFacebookAppIdKey: appId,
                               ACFacebookAudienceKey: ACFacebookAudienceEveryone,
-                              ACFacebookPermissionsKey: permissionsArray
+                              ACFacebookPermissionsKey: permissionsArray ?: @[]
                               };
     
     // request access
@@ -503,10 +456,9 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSDictionary *options = @{
         ACFacebookAppIdKey: appId,
         ACFacebookAudienceKey: ACFacebookAudienceEveryone,
-        ACFacebookPermissionsKey: permissionsArray
+        ACFacebookPermissionsKey: permissionsArray ?: @[]
     };
-    
-    
+  
     [accountStore requestAccessToAccountsWithType:accountType options:options completion:^(BOOL granted, NSError *error){
         if (granted){
             NSArray *arrayOfAccounts = [accountStore accountsWithAccountType:accountType];
@@ -666,6 +618,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
                          NSArray *response = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error];
                          NSString *rawData = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
                          NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys: isSuccess,@"success", response,@"response", rawData,@"rawResponse", @"twitter",@"platform", nil];
+                         RELEASE_TO_NIL(rawData);
                          [self fireEvent:callbackEventName withObject:event];
                      }];
                     
@@ -719,8 +672,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:nil];
     NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
-    BOOL emailIsHTML = [TiUtils boolValue:@"emailIsHTML" properties:arguments def:NO];
-    
+  
     // Get custom attributes
     NSString *twitterText = [TiUtils stringValue:@"twitterText" properties:arguments def:nil];
     NSString *twitterImage = [TiUtils stringValue:@"twitterImage" properties:arguments def:nil];
@@ -757,9 +709,9 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
             } else if(shareURL) {
                 shareImageProvider.facebookImage = nil;
             }
-            
-            
+          
             [activityItems addObject:shareImageProvider];
+            RELEASE_TO_NIL(shareImageProvider);
         }
     }
     // End Image Provider
@@ -779,6 +731,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         }
         
         [activityItems addObject:textItem];
+        RELEASE_TO_NIL(textItem);
     }
     
     if(shareURL){
@@ -790,7 +743,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 	// Custom Activities
     if (customActivities != nil){
 		NSMutableArray * activities = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [customActivities count]; i++) {
+        for (NSInteger i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
             NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -803,14 +756,17 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
 
             NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
             [activities addObject:nappActivity];
-            
+            RELEASE_TO_NIL(nappActivity);
         }
 
         avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+        RELEASE_TO_NIL(activities);
 	} else {
 		avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:nil];
 	}
-		
+  
+  RELEASE_TO_NIL(activityItems);
+
 	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
 	if (subject) {
 		[avc setValue:subject forKey:@"subject"];
@@ -823,33 +779,31 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     }
     
 	// Completion Block Handler
-    [avc setCompletionHandler:^(NSString *act, BOOL done) {
-		if (!done) {
-			NSDictionary *event = @{
-				@"success": @NO,
-				@"platform": @"activityView",
-			};
-			[self fireEvent:@"cancelled" withObject:event];
-		} else {
-			// RKS NOTE: Here we must verify if is a CustomActivity or not
-			// to returns ACTIVITY_CUSTOM constant
-			NSInteger activity;
-			if ([act rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
-				activity = 100;
-			} else {
-				activity = act;
-			}
-
-			NSDictionary *event = @{
-				@"success": @YES,
-				@"platform": @"activityView",
-				@"activity": NUMLONG(activity),
-				@"activityName": act
-			};
-			[self fireEvent:@"complete" withObject:event];
-		}
-	}];
-    
+  [avc setCompletionWithItemsHandler:^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
+    if (!completed) {
+      NSDictionary *event = @{
+        @"success": @NO,
+        @"platform": @"activityView"
+      };
+      [self fireEvent:@"cancelled" withObject:event];
+    } else {
+      // RKS NOTE: Here we must verify if is a CustomActivity or not
+      // to returns ACTIVITY_CUSTOM constant
+      NSString *activity = activityType;
+      if ([activityType rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
+        activity = [self ACTIVITY_CUSTOM];
+      }
+      
+      NSDictionary *event = @{
+        @"success": @YES,
+        @"platform": @"activityView",
+        @"activity": activity,
+        @"activityName": activityType
+      };
+      [self fireEvent:@"complete" withObject:event];
+    }
+  }];
+  
 	// Show ActivityViewController
     [[TiApp app] showModalController:avc animated:YES];
 }
@@ -882,8 +836,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     // Get Properties from JavaScript
     NSString *htmlshareText = [TiUtils stringValue:@"htmlText" properties:arguments def:nil];
     NSString *shareText = [TiUtils stringValue:@"text" properties:arguments def:@""];
-	NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
-    NSString *shareImage = [TiUtils stringValue:@"image" properties:arguments def:nil];
+    NSURL *shareURL = [NSURL URLWithString:[TiUtils stringValue:@"url" properties:arguments def:nil]];
     NSString *removeIcons = [TiUtils stringValue:@"removeIcons" properties:arguments def:nil];
     NSArray *passthroughViews = [arguments objectForKey:@"passthroughViews"];
 
@@ -925,6 +878,7 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
                 textItem.customHtmlText = htmlshareText;
             }
             [activityItems addObject:textItem];
+            RELEASE_TO_NIL(textItem);
         }else{
             [activityItems addObject:shareText];
         }
@@ -962,23 +916,25 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     
     // Custom Activities
     if (customActivities != nil){
-        for (int i = 0; i < [customActivities count]; i++) {
+        for (NSInteger i = 0; i < [customActivities count]; i++) {
             NSDictionary *activityDictionary = [customActivities objectAtIndex:i];
             NSString * activityImage = [TiUtils stringValue:@"image" properties:activityDictionary def:nil];
             NSDictionary *activityStyling = [NSDictionary dictionaryWithObjectsAndKeys:
                 [TiUtils stringValue:@"type" properties:activityDictionary def:@""], @"type",
                 [TiUtils stringValue:@"title" properties:activityDictionary def:@""], @"title",
                 [self findImage:activityImage], @"image",
-				[activityDictionary objectForKey:@"callback"], @"callback",
+                [activityDictionary objectForKey:@"callback"], @"callback",
                 self, @"module",
             nil];
 
             NappCustomActivity *nappActivity = [[NappCustomActivity alloc] initWithSettings:activityStyling];
             [activities addObject:nappActivity];
-            
+            RELEASE_TO_NIL(nappActivity);
         }
 	}
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+  
+  UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems: activityItems applicationActivities:activities];
+  RELEASE_TO_NIL(activityItems);
 
 	NSString *subject = [TiUtils stringValue:@"subject" properties:arguments def:nil];
 	if (subject) {
@@ -996,13 +952,12 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         [avc setCompletionWithItemsHandler:^(NSString *activityType, BOOL completed,  NSArray *returnedItems, NSError *activityError) {
             [self fireActivityEventWithActivityType:activityType completed:completed];
             [avc setCompletionWithItemsHandler:nil];
-        
         }];
     } else {
-        [avc setCompletionHandler:^(NSString *activityType, BOOL completed) {
-            [self fireActivityEventWithActivityType:activityType completed:completed];
-            [avc setCompletionHandler:nil];
-        }];
+      [avc setCompletionWithItemsHandler:^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
+        [self fireActivityEventWithActivityType:activityType completed:completed];
+        [avc setCompletionWithItemsHandler:nil];
+      }];
     }
     
     // popOver
@@ -1070,38 +1025,30 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
         UIActivityTypePostToWeibo, @"weibo",
         UIActivityTypePrint, @"print",
         UIActivityTypeSaveToCameraRoll, @"camera",
+        UIActivityTypeAddToReadingList, @"readinglist",
+        UIActivityTypePostToFlickr, @"flickr",
+        UIActivityTypePostToVimeo, @"vimeo",
+        UIActivityTypePostToTencentWeibo, @"tencentweibo",
+        UIActivityTypeAirDrop, @"airdrop",
+        UIActivityTypeOpenInIBooks, @"ibooks",
         nil
     ];
-    
-    if (&UIActivityTypeAddToReadingList) {
-        [iconMapping setValue:UIActivityTypeAddToReadingList forKey:@"readinglist"];
+  
+    if ([TiUtils isIOSVersionOrGreater:@"11.0"]) {
+      iconMapping[@"pdf"] = UIActivityTypeMarkupAsPDF;
     }
-    
-    if (&UIActivityTypePostToFlickr) {
-        [iconMapping setValue:UIActivityTypePostToFlickr forKey:@"flickr"];
-    }
-    
-    if (&UIActivityTypePostToVimeo) {
-        [iconMapping setValue:UIActivityTypePostToVimeo forKey:@"vimeo"];
-    }
-    
-    if (&UIActivityTypeAirDrop) {
-        [iconMapping setValue:UIActivityTypeAirDrop forKey:@"airdrop"];
-    }
-    
-    if (&UIActivityTypePostToTencentWeibo) {
-        [iconMapping setValue:UIActivityTypePostToTencentWeibo forKey:@"tencentweibo"];
-    }
-
+  
     NSArray *icons = [removeIcons componentsSeparatedByString:@","];
     NSMutableArray *excludedIcons = [[NSMutableArray alloc] init];
 
-	for (int i = 0; i < [icons count]; i++ ) {
+    for (NSInteger i = 0; i < [icons count]; i++ ) {
         NSString *str = [icons objectAtIndex:i];
         [excludedIcons addObject:[iconMapping objectForKey:str]];
     }
 
-    return excludedIcons;
+    RELEASE_TO_NIL(iconMapping);
+
+    return [excludedIcons autorelease];
 }
 
 #pragma mark Helper
@@ -1117,25 +1064,33 @@ MAKE_SYSTEM_PROP(ACTIVITY_CUSTOM, 100);
     } else {
         // Here we must verify if is a CustomActivity or not
         // to returns ACTIVITY_CUSTOM constant
-        NSInteger activity;
+        NSString *activity = activityName;
         if ([activityName rangeOfString:@"com.apple.UIKit.activity"].location == NSNotFound) {
             activity = [self ACTIVITY_CUSTOM];
-        } else {
-            activity = activityName;
         }
         
         NSDictionary *event = @{
-                                @"success": NUMBOOL(YES),
-                                @"platform": @"activityPopover",
-                                @"activity": NUMLONG(activity),
-                                @"activityName": activityName
-                                };
+            @"success": NUMBOOL(YES),
+            @"platform": @"activityPopover",
+            @"activity": activity,
+            @"activityName": activityName
+        };
         
         [self fireEvent:@"complete" withObject:event];
     }
 }
 
+- (NSString *)ACTIVITY_MARKUP_AS_PDF
+{
+  if (![TiUtils isIOSVersionOrGreater:@"11.0"]) {
+    return nil;
+  }
+  
+  return UIActivityTypeMarkupAsPDF;
+}
+
 #pragma mark - UIPopoverPresentationController Delegate
+
 - (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
 {
     NSLog(@"[INFO] prepareForPopoverPresentation");

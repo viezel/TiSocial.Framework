@@ -21,6 +21,17 @@
 
 @implementation NappCustomActivity
 
+- (void)dealloc
+{
+  [_activityItems release];
+  [_title release];
+  [_type release];
+  [_image release];
+  [_module release];
+  [_callback release];
+
+  [super dealloc];
+}
 
 #pragma mark - Hierarchy
 #pragma mark UIActivity
