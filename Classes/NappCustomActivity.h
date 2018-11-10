@@ -11,6 +11,6 @@
 @interface NappCustomActivity : UIActivity
 
 - (UIViewController *)performWithActivityItems:(NSArray *)activityItems;
--(id)initWithSettings:(NSDictionary *)dict;
+- (id)initWithSettings:(NSDictionary *)dict;
 
 @end
