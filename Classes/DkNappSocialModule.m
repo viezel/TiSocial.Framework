@@ -21,6 +21,11 @@
 #import "TiUIButtonProxy.h"
 #import "TiUIViewProxy.h"
 
+static NSString *const CUSTOM_ACTIVITY = @"custom_activity";
+
+@interface DkNappSocialModule()
+@property (nonatomic,readwrite) NSString *ACTIVITY_CUSTOM;
+@end
 @implementation DkNappSocialModule
 
 #pragma mark Activties
@@ -42,7 +47,7 @@ MAKE_SYSTEM_STR(ACTIVITY_TENCENT_WEIBO, UIActivityTypePostToTencentWeibo);
 MAKE_SYSTEM_STR(ACTIVITY_OPEN_IN_IBOOKS, UIActivityTypeOpenInIBooks);
 
 // Custom
-MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, "custom_activity");
+MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, CUSTOM_ACTIVITY);
 
 #pragma mark Internal
 
@@ -62,7 +67,7 @@ MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, "custom_activity");
   // this method is called when the module is first loaded
   // you *must* call the superclass
   [super startup];
-
+  self.ACTIVITY_CUSTOM = CUSTOM_ACTIVITY;
   popoverController = nil;
   accountStore = nil;
 
