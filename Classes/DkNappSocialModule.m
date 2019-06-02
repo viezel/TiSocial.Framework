@@ -18,7 +18,6 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
-#import "TiUIButtonProxy.h"
 #import "TiUIViewProxy.h"
 
 static NSString *const CUSTOM_ACTIVITY = @"custom_activity";
@@ -111,19 +110,19 @@ MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, CUSTOM_ACTIVITY);
 }
 
 - (NSNumber *)isRequestTwitterSupported:(id)args { //for iOS6 twitter
-  return [TiUtils isIOS6OrGreater] ? [self isNetworkSupported:SLServiceTypeTwitter] : NUMBOOL(NO);
+  return [TiUtils isIOSVersionOrGreater:@"6.0"] ? [self isNetworkSupported:SLServiceTypeTwitter] : NUMBOOL(NO);
 }
 
 - (NSNumber *)isFacebookSupported:(id)args {
-  return [TiUtils isIOS6OrGreater] ? [self isNetworkSupported:SLServiceTypeFacebook] : NUMBOOL(NO);
+  return [TiUtils isIOSVersionOrGreater:@"6.0"] ? [self isNetworkSupported:SLServiceTypeFacebook] : NUMBOOL(NO);
 }
 
 - (NSNumber *)isSinaWeiboSupported:(id)args {
-  return [TiUtils isIOS6OrGreater] ? [self isNetworkSupported:SLServiceTypeSinaWeibo] : NUMBOOL(NO);
+  return [TiUtils isIOSVersionOrGreater:@"6.0"] ? [self isNetworkSupported:SLServiceTypeSinaWeibo] : NUMBOOL(NO);
 }
 
 - (NSNumber *)isActivityViewSupported:(id)args {
-  return [TiUtils isIOS6OrGreater] ? [self isActivitySupported] : NUMBOOL(NO);
+  return [TiUtils isIOSVersionOrGreater:@"6.0"] ? [self isActivitySupported] : NUMBOOL(NO);
 }
 
 - (UIImage *)findImage:(NSString *)imagePath {
@@ -846,11 +845,6 @@ MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, CUSTOM_ACTIVITY);
     return;
   }
 
-  if (![senderButton isKindOfClass:[TiUIButtonProxy class]] && ![senderButton isKindOfClass:[TiViewProxy class]]) {
-    NSLog(@"[ERROR] property: view - must be a button or view");
-    return;
-  }
-
   if ([arguments objectForKey:@"rect"]) {
     popoverRect = [TiUtils rectValue:[arguments objectForKey:@"rect"]];
   } else {
@@ -947,7 +941,7 @@ MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, CUSTOM_ACTIVITY);
   }
 
   // iOS 8 and later should use the item handler instead
-  if ([TiUtils isIOS8OrGreater]) {
+  if ([TiUtils isIOSVersionOrGreater:@"8.0"]) {
     [avc setCompletionWithItemsHandler:^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
       [self fireActivityEventWithActivityType:activityType completed:completed];
       [avc setCompletionWithItemsHandler:nil];
@@ -974,7 +968,7 @@ MAKE_SYSTEM_STR(ACTIVITY_CUSTOM, CUSTOM_ACTIVITY);
       return;
 
       // Button /View inside window
-    } else if ([TiUtils isIOS8OrGreater]) {
+    } else if ([TiUtils isIOSVersionOrGreater:@"8.0"]) {
 
       // iOS 8 and later
       [avc setModalPresentationStyle:UIModalPresentationPopover];
