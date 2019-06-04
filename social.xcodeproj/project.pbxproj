@@ -186,13 +186,14 @@
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "social" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
+				ja,
+				de,
+				fr,
+				Base,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* social */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
